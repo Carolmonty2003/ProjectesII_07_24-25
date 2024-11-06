@@ -22,8 +22,8 @@ MonoBehaviour:
     Height: 1.35
     Width: 0.9
     StepHeight: 0.6
-    GrowHeight: 2
-    GrowWidth: 2
+    GrowHeight: 4.35
+    GrowWidth: 2.9
     RayInset: 0.1
   VerticalDeadZoneThreshold: 0.3
   HorizontalDeadZoneThreshold: 0.1
