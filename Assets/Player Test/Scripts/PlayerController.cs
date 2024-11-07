@@ -408,6 +408,7 @@ namespace GoodbyeBuddy
         #region Growing
 
         private float _timeStartedGrowing;
+        public bool Growing { get; private set; }
         private bool GrowPressed => _frameInput.Move.y < -Stats.VerticalDeadZoneThreshold;
 
         private bool CanStand => IsStandingPosClear(_rb.position + _character.StandingColliderCenter);
