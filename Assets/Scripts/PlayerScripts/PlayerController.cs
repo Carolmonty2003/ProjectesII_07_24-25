@@ -30,9 +30,11 @@ namespace GoodbyeBuddy
         public Vector2 Up { get; private set; }
         public Vector2 Right { get; private set; }
         public bool Growing { get; private set; }
+        public bool IsButtonActive { get; internal set; }
         public Vector2 Input => _frameInput.Move;
         public Vector2 GroundNormal { get; private set; }
         public Vector2 Velocity { get; private set; }
+
 
         public void AddFrameForce(Vector2 force, bool resetVelocity = false)
         {
@@ -72,7 +74,7 @@ namespace GoodbyeBuddy
 
         private float _delta, _time;
 
-        private void Awake()
+        private void Awake() //Inicializa referencias y configura el personaje. Agrega el jugador al PhysicsSimulator, asegurando que su movimiento sea simulado correctamente.
         {
             if (!TryGetComponent(out _playerInput)) _playerInput = gameObject.AddComponent<PlayerInput>();
             if (!TryGetComponent(out _constantForce)) _constantForce = gameObject.AddComponent<ConstantForce2D>();
@@ -82,27 +84,29 @@ namespace GoodbyeBuddy
             PhysicsSimulator.Instance.AddPlayer(this);
         }
 
+        //Elimina al jugador del simulador al destruir el objeto, para limpiar referencias.
         private void OnDestroy() => PhysicsSimulator.Instance.RemovePlayer(this);
 
+        //Vuelve a configurar el personaje cuando se modifica alguna propiedad en el editor de Unity.
         public void OnValidate() => SetupCharacter();
 
-        public void TickUpdate(float delta, float time)
+        public void TickUpdate(float delta, float time) //recopila entrada jugador
         {
             _delta = delta;
             _time = time;
 
-            GatherInput();
+            GatherInput(); //Usa la entrada del jugador (PlayerInput) para actualizar la dirección, el estado de salto y el crecimiento Growing del jugador.
         }
 
-        public void TickFixedUpdate(float delta)
+        public void TickFixedUpdate(float delta) //Procesa logica movimiento y fisicas
         {
             _delta = delta;
 
             if (!Active) return;
 
-            RemoveTransientVelocity();
+            RemoveTransientVelocity(); //elimina velicidad basura q se puede acumular
 
-            SetFrameData();
+            SetFrameData(); //Configura rotación, dirección y posición del jugador con marco actual, manteniendo consistencia en el estado.
 
             CalculateCollisions();
             CalculateDirection();
@@ -110,7 +114,7 @@ namespace GoodbyeBuddy
 
             CalculateExternalModifiers();
 
-            TraceGround();
+            TraceGround(); //rastrear y ajustarse a la superficie sobre la cual se encuentra el jugador
             Move();
 
             CalculateGrow();
@@ -414,17 +418,25 @@ namespace GoodbyeBuddy
         private bool CanStand => IsStandingPosClear(_rb.position + _character.StandingColliderCenter);
 
         object IPlayerController.transform { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public bool IsBottonActive { get; internal set; }
 
         private bool IsStandingPosClear(Vector2 pos) => CheckPos(pos, _character.StandingColliderSize - SKIN_WIDTH * Vector2.one);
 
+    
         private void CalculateGrow()
         {
-            if (_frameInput.Grow && !Growing)
+            //if (_frameInput.Grow && !Growing)
+            //if (!Growing && IsButtonActive)
+            if (!Growing && _playerInput.Gather().Grow)
             {
+                Debug.Log("Crece");
                 ToggleGrowing(true);
             }
-            else if (!_frameInput.Grow && Growing)
+            //else if (!_frameInput.Grow && Growing)
+            //else if (Growing && !IsButtonActive)
+            else if (Growing && !_playerInput.Gather().Grow)
             {
+                Debug.Log("NO Crece");
                 ToggleGrowing(false);
             }
         }
@@ -703,4 +715,6 @@ namespace GoodbyeBuddy
         public Vector2 Velocity;
         public bool Grounded;
     }
+
+
 }

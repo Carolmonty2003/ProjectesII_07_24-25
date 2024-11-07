@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     public PlayerMovementData bigSizeDataMovement;
     public PlayerMovementData littleSizeDataMovement;
 
+    public bool IsBottonActive { get; internal set; }
+
     private void Awake()
     {
         currentDataMovement = normalDataMovement;

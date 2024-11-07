@@ -42,6 +42,7 @@ namespace GoodbyeBuddy
             };
         }
 #else
+        public bool IsButtonPressed { get; set; }
         private bool _isGrowing;
 
         public FrameInput Gather()
@@ -49,6 +50,11 @@ namespace GoodbyeBuddy
             if (Input.GetKeyDown(KeyCode.G))
             {
                 _isGrowing = !_isGrowing;
+            }
+            else if (IsButtonPressed)
+            {
+                _isGrowing = !_isGrowing;
+                IsButtonPressed = false;
             }
 
             return new FrameInput

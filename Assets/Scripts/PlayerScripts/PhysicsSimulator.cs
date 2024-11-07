@@ -25,7 +25,7 @@ namespace GoodbyeBuddy
             _time += delta;
             foreach (var platform in _platforms)
             {
-                platform.TickUpdate(delta, _time);
+                platform.TickUpdate(delta, _time); //permite al obj realizar actualizaciones en cada frame
             }
 
             foreach (var player in _players)
