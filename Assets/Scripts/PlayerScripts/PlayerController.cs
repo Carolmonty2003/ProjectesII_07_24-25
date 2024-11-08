@@ -254,6 +254,7 @@ namespace GoodbyeBuddy
                 _groundHit = Physics2D.Raycast(point, -Up, (!Growing ? GrounderLength : GrounderLengthGrowed) + _currentStepDownLength, Stats.CollisionLayers);
 
                 if (!_groundHit) return false;
+                if (_groundHit.collider.isTrigger) return false;
 
                 if (Vector2.Angle(_groundHit.normal, Up) > Stats.MaxWalkableSlope)
                 {
