@@ -797,7 +797,7 @@ Transform:
   m_Children:
   - {fileID: 9052431240293478145}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &273597800766659932
 MonoBehaviour:
@@ -917,8 +917,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.675}
-  m_Size: {x: 0.85999995, y: 1.3100001}
+  m_Offset: {x: 0, y: 0.63}
+  m_Size: {x: 0.65989995, y: 1.22}
   m_Direction: 0
 --- !u!1001 &173577804547430129
 PrefabInstance:

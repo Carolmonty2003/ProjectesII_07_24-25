@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace GoodbyeBuddy
 {
-    public class ButtonScript : MonoBehaviour
+    public class ButtonGrowScript : MonoBehaviour
     {
         private void OnTriggerEnter2D(Collider2D other)
         {
@@ -12,16 +12,9 @@ namespace GoodbyeBuddy
                 var playerInput = player.GetComponent<PlayerInput>();
                 if (playerInput != null)
                 {
-                    playerInput.IsButtonPressed = true;
+                    playerInput.IsButtonGrowPressed = true;
                 }
             }
         }
-        //private void OnTriggerExit2D(Collider2D other)
-        //{
-        //    if (other.TryGetComponent(out PlayerController player))
-        //    {
-        //        player.IsBottonActive = false;
-        //    }
-        //}
     }
 }

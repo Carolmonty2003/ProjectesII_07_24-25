@@ -19,12 +19,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 65
   CharacterSize:
-    Height: 1.35
-    Width: 0.9
+    Height: 1.26
+    Width: 0.6999
     StepHeight: 0.6
-    GrowHeight: 2
-    GrowWidth: 2
-    RayInset: 0.1
+    GrowHeight: 3
+    GrowWidth: 1.67
+    RayInset: 0.06
   VerticalDeadZoneThreshold: 0.3
   HorizontalDeadZoneThreshold: 0.1
   PositionCorrectionMode: 0
@@ -41,7 +41,7 @@ MonoBehaviour:
   EndJumpEarlyExtraForceMultiplier: 3
   MaxAirJumps: 0
   AllowGrowing: 1
-  GrowSlowDownTime: 0.5
-  GrowSpeedModifier: 0.5
+  GrowSlowDownTime: 0.7
+  GrowSpeedModifier: 0.7
   NegativeYVelocityNegation: 0.2
   ExternalVelocityDecayRate: 0.5
