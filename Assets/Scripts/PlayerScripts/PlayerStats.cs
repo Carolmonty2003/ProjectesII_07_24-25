@@ -65,13 +65,13 @@ namespace GoodbyeBuddy
         public float Height = 1.8f;
 
         [Range(0.1f, 10), Tooltip("The width of your collider")]
-        public float Width = 0.6f;
+        public float Width = 0.4f;
 
         [Range(STEP_BUFFER, 15), Tooltip("Step height allows you to step over rough terrain like steps and rocks.")]
         public float StepHeight = 0.5f;
 
         [Range(0.1f, 10), Tooltip("A percentage of your height stat which determines your height while crouching. A smaller crouch requires more step height sacrifice")]
-        public float GrowHeight = 0.6f;
+        public float GrowHeight = 0.8f;
 
         [Range(0.1f, 10), Tooltip("A percentage of your width stat which determines your height while crouching. A smaller crouch requires more step height sacrifice")]
         public float GrowWidth = 0.6f;
@@ -96,8 +96,8 @@ namespace GoodbyeBuddy
 
             s.GrowingHeight = GrowHeight;
             s.GrowingWidth = GrowWidth;  
-            s.GrowColliderSize = new Vector2(s.GrowingWidth - COLLIDER_EDGE_RADIUS * 2, s.GrowingHeight - s.StepHeight); 
-            s.GrowingColliderCenter = new Vector2(0, s.GrowingHeight - s.GrowColliderSize.y / 2 - COLLIDER_EDGE_RADIUS);
+            s.GrowColliderSize = new Vector2(s.GrowingWidth - COLLIDER_EDGE_RADIUS * 2, s.GrowingHeight - s.StepHeight + 0.4f); 
+            s.GrowingColliderCenter = new Vector2(0, s.GrowingHeight - s.GrowColliderSize.y / 2 - COLLIDER_EDGE_RADIUS - 0.8f);
 
             return s;
         }

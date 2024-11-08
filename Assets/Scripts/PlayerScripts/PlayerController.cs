@@ -425,14 +425,12 @@ namespace GoodbyeBuddy
             //if (!Growing && IsButtonActive)
             if (!Growing && _playerInput.Gather().Grow)
             {
-                Debug.Log("Crece");
                 ToggleGrowing(true);
             }
             //else if (!_frameInput.Grow && Growing)
             //else if (Growing && !IsButtonActive)
             else if (Growing && !_playerInput.Gather().Grow)
             {
-                Debug.Log("NO Crece");
                 ToggleGrowing(false);
             }
         }

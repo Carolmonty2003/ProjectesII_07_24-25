@@ -42,7 +42,8 @@ namespace GoodbyeBuddy
             };
         }
 #else
-        public bool IsButtonPressed { get; set; }
+        public bool IsButtonGrowPressed { get; set; }
+        public bool IsButtonNormalPressed { get; set; }
         private bool _isGrowing;
 
         public FrameInput Gather()
@@ -51,10 +52,15 @@ namespace GoodbyeBuddy
             {
                 _isGrowing = !_isGrowing;
             }
-            else if (IsButtonPressed)
+            else if (IsButtonGrowPressed)
             {
-                _isGrowing = !_isGrowing;
-                IsButtonPressed = false;
+                _isGrowing = true;
+                IsButtonGrowPressed = false;
+            }
+            else if (IsButtonNormalPressed)
+            {
+                _isGrowing = false;
+                IsButtonNormalPressed = false;
             }
 
             return new FrameInput
