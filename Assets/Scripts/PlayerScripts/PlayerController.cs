@@ -221,7 +221,7 @@ namespace GoodbyeBuddy
         private bool _grounded;
         private float _currentStepDownLength;
         private float GrounderLength => _character.StepHeight + SKIN_WIDTH;
-
+        private float GrounderLengthGrowed => _character.StepHeight + SKIN_WIDTH + 1;
         private Vector2 RayPoint => _framePosition + Up * (_character.StepHeight + SKIN_WIDTH);
 
         private void CalculateCollisions()
@@ -248,7 +248,9 @@ namespace GoodbyeBuddy
 
             bool PerformRay(Vector2 point)
             {
-                _groundHit = Physics2D.Raycast(point, -Up, GrounderLength + _currentStepDownLength, Stats.CollisionLayers);
+                //_groundHit = Physics2D.Raycast(point, -Up, GrounderLength + _currentStepDownLength, Stats.CollisionLayers);
+                _groundHit = Physics2D.Raycast(point, -Up, (!Growing ? GrounderLength : GrounderLengthGrowed) + _currentStepDownLength, Stats.CollisionLayers);
+
                 if (!_groundHit) return false;
 
                 if (Vector2.Angle(_groundHit.normal, Up) > Stats.MaxWalkableSlope)
@@ -282,8 +284,14 @@ namespace GoodbyeBuddy
                 _currentStepDownLength = _character.StepHeight;
                 _coyoteUsable = true;
                 _bufferedJumpUsable = true;
-                ResetAirJumps();
-                SetColliderMode(ColliderMode.Standard);
+                if (!Growing)
+                {
+                    SetColliderMode(ColliderMode.Standard);
+                }
+                else
+                {
+                    SetColliderMode(ColliderMode.Growing);
+                }
             }
             else
             {
@@ -300,7 +308,7 @@ namespace GoodbyeBuddy
 
             switch (mode)
             {
-                case ColliderMode.Standard:
+                case ColliderMode.Standard:                   
                     _collider.size = _character.StandingColliderSize;
                     _collider.offset = _character.StandingColliderCenter;
                     break;
@@ -402,8 +410,6 @@ namespace GoodbyeBuddy
             Jumped?.Invoke(jumpType);
         }
 
-        private void ResetAirJumps() => _airJumpsRemaining = Stats.MaxAirJumps;
-
         #endregion
 
         #region Growing
@@ -421,14 +427,10 @@ namespace GoodbyeBuddy
     
         private void CalculateGrow()
         {
-            //if (_frameInput.Grow && !Growing)
-            //if (!Growing && IsButtonActive)
             if (!Growing && _playerInput.Gather().Grow)
             {
                 ToggleGrowing(true);
             }
-            //else if (!_frameInput.Grow && Growing)
-            //else if (Growing && !IsButtonActive)
             else if (Growing && !_playerInput.Gather().Grow)
             {
                 ToggleGrowing(false);
