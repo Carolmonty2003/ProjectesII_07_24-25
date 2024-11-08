@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4273432568383698333}
   - component: {fileID: 1272388702119783573}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: CameraPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 424139077116732990}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: -0.069999695, y: 3.48, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -55,7 +55,7 @@ MonoBehaviour:
   m_Follow: {fileID: 3836265101080423487}
   m_Lens:
     FieldOfView: 34
-    OrthographicSize: 3.0436587
+    OrthographicSize: 7.3
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -81,7 +81,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8495412386306174522}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Effects
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +117,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8108206958302287644}
   - component: {fileID: 1991074021667232627}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TrailRenderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -261,7 +261,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8559281878610709811}
-  m_Layer: 7
+  m_Layer: 3
   m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -293,7 +293,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 649921717367300159}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -332,7 +332,7 @@ GameObject:
   - component: {fileID: 5086061128628018206}
   - component: {fileID: 8348914573360049693}
   - component: {fileID: 126464162599210294}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: cm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -406,7 +406,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 1
-  m_FollowOffset: {x: 0, y: 0, z: -10}
+  m_FollowOffset: {x: -0.07, y: 3.48, z: -10}
   m_XDamping: 1
   m_YDamping: 1
   m_ZDamping: 1
@@ -425,7 +425,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5995192388730337275}
   - component: {fileID: 4802597699934974757}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: WallClimbSource
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -554,7 +554,7 @@ GameObject:
   - component: {fileID: 2017646876264165417}
   - component: {fileID: 3952044421585114504}
   - component: {fileID: 1694054784691226670}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -660,7 +660,7 @@ GameObject:
   - component: {fileID: 9052431240293478145}
   - component: {fileID: 805967799256450683}
   - component: {fileID: 2933798037823191482}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -939,7 +939,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 454690546302275310}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Audio
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -976,9 +976,9 @@ GameObject:
   - component: {fileID: 8926874826381107095}
   - component: {fileID: 4181783084724045822}
   - component: {fileID: 7459351635073135604}
-  m_Layer: 7
+  m_Layer: 3
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -998,7 +998,7 @@ Transform:
   - {fileID: 9052431240293478145}
   - {fileID: 8559281878610709811}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &273597800766659932
 MonoBehaviour:
@@ -1189,6 +1189,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Double Jump Particles
       objectReference: {fileID: 0}
+    - target: {fileID: 4729726659894284020, guid: 20003277b5a442941b1548f8ab60bdc1, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1260,6 +1264,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Move Particles
       objectReference: {fileID: 0}
+    - target: {fileID: 5285657556282733275, guid: e2675f1885eeaf14ca9cbfba8f356f98, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1286,6 +1294,10 @@ PrefabInstance:
     - target: {fileID: 2178465536612680734, guid: 411494045f03ac3429ed4c548960285d, type: 3}
       propertyPath: m_Name
       value: Wall Slide Particles
+      objectReference: {fileID: 0}
+    - target: {fileID: 2178465536612680734, guid: 411494045f03ac3429ed4c548960285d, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3705967316681009412, guid: 411494045f03ac3429ed4c548960285d, type: 3}
       propertyPath: m_RootOrder
@@ -1439,7 +1451,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6400305913253353167, guid: 7c80b5d6267c80f4b93bec0e577ef7cb, type: 3}
       propertyPath: m_Layer
-      value: 5
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1508,9 +1520,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6616999444744012937, guid: e5ec9242ffdf2184a8224fcfbd24446a, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8966734778122369184, guid: e5ec9242ffdf2184a8224fcfbd24446a, type: 3}
       propertyPath: m_Name
       value: Jump Particles
+      objectReference: {fileID: 0}
+    - target: {fileID: 8966734778122369184, guid: e5ec9242ffdf2184a8224fcfbd24446a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
