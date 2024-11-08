@@ -45,12 +45,17 @@ namespace GoodbyeBuddy
         public bool IsButtonGrowPressed { get; set; }
         public bool IsButtonNormalPressed { get; set; }
         private bool _isGrowing;
+        private bool _isShrinking = false;
 
         public FrameInput Gather()
         {
             if (Input.GetKeyDown(KeyCode.G))
             {
                 _isGrowing = !_isGrowing;
+            }
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                _isShrinking = true;
             }
             else if (IsButtonGrowPressed)
             {
@@ -68,7 +73,8 @@ namespace GoodbyeBuddy
                 JumpDown = Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.C),
                 JumpHeld = Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.C),
                 Move = new Vector2(Input.GetAxisRaw("Horizontal"), 0),
-                Grow = _isGrowing
+                Grow = _isGrowing,
+                Shrink = _isShrinking
             };
         }
 #endif
@@ -80,5 +86,6 @@ namespace GoodbyeBuddy
             public bool JumpDown;
             public bool JumpHeld;
             public bool Grow;
+            public bool Shrink;
         }
 }
