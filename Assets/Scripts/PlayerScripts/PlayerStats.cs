@@ -34,7 +34,12 @@ namespace GoodbyeBuddy
         public float CoyoteTime = 0.15f;
         public float JumpPower = 20;
         public float EndJumpEarlyExtraForceMultiplier = 3;
-        public int MaxAirJumps = 1;
+        public int MaxAirJumps = 1; 
+        
+        // Jump Grow
+        [Header("Jump Grow"), Space] public float ExtraConstantGravityGrow = 40;
+        public float JumpPowerGrow = 20;
+        public float EndJumpEarlyExtraForceMultiplierGrow = 3;
 
         // Grow
         [Header("Grow"), Space] public bool AllowGrowing;

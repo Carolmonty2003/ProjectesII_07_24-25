@@ -118,7 +118,7 @@ namespace GoodbyeBuddy
             Move();
 
             CalculateGrow();
-            //CalculateShrink();
+            CalculateShrink();
 
             CleanFrameData();
 
@@ -150,7 +150,6 @@ namespace GoodbyeBuddy
 
             // Airborne collider
             _airborneCollider = GetComponent<CapsuleCollider2D>();
-            _airborneCollider.hideFlags = HideFlags.NotEditable; // evita editado colliders
             _airborneCollider.size = new Vector2(_character.Width - SKIN_WIDTH * 2, _character.Height - SKIN_WIDTH * 2);
             _airborneCollider.offset = new Vector2(0, _character.Height / 2);
             _airborneCollider.sharedMaterial = _rb.sharedMaterial;
@@ -416,7 +415,7 @@ namespace GoodbyeBuddy
                 if (Growing)
                 {
 
-                    AddFrameForce(new Vector2(0, Stats.JumpPower * 0.75f)); 
+                    AddFrameForce(new Vector2(0, Stats.JumpPowerGrow)); 
                 }
                 else
                 {
@@ -593,8 +592,17 @@ namespace GoodbyeBuddy
                 return;
             }
 
-            var extraForce = new Vector2(0, _grounded ? 0 : -Stats.ExtraConstantGravity * (_endedJumpEarly && Velocity.y > 0 ? Stats.EndJumpEarlyExtraForceMultiplier : 1));
-            _constantForce.force = extraForce * _rb.mass;
+            if (Growing)
+            {
+                var extraForce = new Vector2(0, _grounded ? 0 : -Stats.ExtraConstantGravityGrow * (_endedJumpEarly && Velocity.y > 0 ? Stats.EndJumpEarlyExtraForceMultiplierGrow : 1));
+                _constantForce.force = extraForce * _rb.mass;
+
+            }
+            else
+            {
+                var extraForce = new Vector2(0, _grounded ? 0 : -Stats.ExtraConstantGravity * (_endedJumpEarly && Velocity.y > 0 ? Stats.EndJumpEarlyExtraForceMultiplier : 1));
+                _constantForce.force = extraForce * _rb.mass;
+            }
 
             var targetSpeed = _hasInputThisFrame ? Stats.BaseSpeed : 0;
 
