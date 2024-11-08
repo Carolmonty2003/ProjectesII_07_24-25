@@ -30,7 +30,7 @@ namespace GoodbyeBuddy
         public Vector2 Up { get; private set; }
         public Vector2 Right { get; private set; }
         public bool Growing { get; private set; }
-        public bool IsButtonActive { get; internal set; }
+        public bool Shrinking { get; private set; }
         public Vector2 Input => _frameInput.Move;
         public Vector2 GroundNormal { get; private set; }
         public Vector2 Velocity { get; private set; }
@@ -118,6 +118,7 @@ namespace GoodbyeBuddy
             Move();
 
             CalculateGrow();
+            //CalculateShrink();
 
             CleanFrameData();
 
@@ -219,8 +220,9 @@ namespace GoodbyeBuddy
         private const int RAY_SIDE_COUNT = 5;
         private RaycastHit2D _groundHit;
         private bool _grounded;
+        private bool _shrinked;
         private float _currentStepDownLength;
-        private float GrounderLength => _character.StepHeight + SKIN_WIDTH;
+        private float GrounderLength => _character.StepHeight + SKIN_WIDTH + 0.2f;
         private float GrounderLengthGrowed => _character.StepHeight + SKIN_WIDTH + 1;
         private Vector2 RayPoint => _framePosition + Up * (_character.StepHeight + SKIN_WIDTH);
 
@@ -284,13 +286,18 @@ namespace GoodbyeBuddy
                 _currentStepDownLength = _character.StepHeight;
                 _coyoteUsable = true;
                 _bufferedJumpUsable = true;
-                if (!Growing)
+                
+                if (Growing)
                 {
-                    SetColliderMode(ColliderMode.Standard);
+                    SetColliderMode(ColliderMode.Growing);
+                }
+                else if (Shrinking)
+                {
+                    SetColliderMode(ColliderMode.Shrinking);
                 }
                 else
                 {
-                    SetColliderMode(ColliderMode.Growing);
+                    SetColliderMode(ColliderMode.Standard);
                 }
             }
             else
@@ -304,19 +311,27 @@ namespace GoodbyeBuddy
 
         private void SetColliderMode(ColliderMode mode)
         {
-            _airborneCollider.enabled = mode == ColliderMode.Airborne;
+            //_airborneCollider.enabled = mode == ColliderMode.Airborne;
 
             switch (mode)
             {
                 case ColliderMode.Standard:                   
                     _collider.size = _character.StandingColliderSize;
                     _collider.offset = _character.StandingColliderCenter;
+                    _airborneCollider.enabled = false;
+                    break;
+                case ColliderMode.Shrinking:
+                    _collider.size = _character.ShrinkColliderSize;
+                    _collider.offset = _character.ShrinkingColliderCenter;
+                    _airborneCollider.enabled = false;
                     break;
                 case ColliderMode.Growing:
                     _collider.size = _character.GrowColliderSize;
                     _collider.offset = _character.GrowingColliderCenter;
+                    _airborneCollider.enabled = false;
                     break;
                 case ColliderMode.Airborne:
+                    _airborneCollider.enabled = true;
                     break;
             }
         }
@@ -325,6 +340,7 @@ namespace GoodbyeBuddy
         {
             Standard,
             Growing,
+            Shrinking,
             Airborne
         }
 
@@ -420,7 +436,6 @@ namespace GoodbyeBuddy
         private bool CanStand => IsStandingPosClear(_rb.position + _character.StandingColliderCenter);
 
         object IPlayerController.transform { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool IsBottonActive { get; internal set; }
 
         private bool IsStandingPosClear(Vector2 pos) => CheckPos(pos, _character.StandingColliderSize - SKIN_WIDTH * Vector2.one);
 
@@ -435,6 +450,17 @@ namespace GoodbyeBuddy
             {
                 ToggleGrowing(false);
             }
+            if (Growing)
+            {
+                UpdateCapsuleColliderSize();
+            }
+        }
+        private void UpdateCapsuleColliderSize()
+        {   
+            Vector2 newSize = _airborneCollider.size;
+            newSize.x = !Growing ? _character.Width : _character.GrowingWidth - SKIN_WIDTH * 2;
+            newSize.y = !Growing ? _character.Height : _character.GrowingHeight - SKIN_WIDTH * 2;
+            _airborneCollider.size = newSize;
         }
 
         private void ToggleGrowing(bool shouldGrow)
@@ -450,7 +476,9 @@ namespace GoodbyeBuddy
                 Growing = false;
             }
 
+
             SetColliderMode(Growing ? ColliderMode.Growing : ColliderMode.Standard);
+            UpdateCapsuleColliderSize();
         }
 
         private bool CheckPos(Vector2 pos, Vector2 size)
@@ -461,6 +489,37 @@ namespace GoodbyeBuddy
             return !hit;
         }
 
+        #endregion
+
+        #region Shrink
+        private float _timeStartedShrinking;
+
+        private void CalculateShrink()
+        {
+            if (!Shrinking && _playerInput.Gather().Shrink)
+            {
+                ToggleShrinking(true);
+            }
+            else
+            {
+                ToggleShrinking(false);
+            }
+        }
+
+        private void ToggleShrinking(bool shouldShrink)
+        {
+            if (shouldShrink)
+            {
+                _timeStartedShrinking = _time;
+                Shrinking = true;
+                SetColliderMode(ColliderMode.Shrinking);
+            }
+            else
+            {
+                if (!CanStand) return;
+                Shrinking = false;
+            }
+        }
         #endregion
 
         #region Move
@@ -542,6 +601,12 @@ namespace GoodbyeBuddy
                 targetSpeed *= Mathf.Lerp(1, Stats.GrowSpeedModifier, growPoint);
             }
 
+            if (Shrinking)
+            {
+                var shrinkPoint = Mathf.InverseLerp(0, Stats.ShrinkSlowDownTime, _time - _timeStartedShrinking);
+                targetSpeed *= Mathf.Lerp(1, Stats.ShrinkSpeedModifier, shrinkPoint);
+            }
+
             var step = _hasInputThisFrame ? Stats.Acceleration : Stats.Friction;
 
             var xDir = (_hasInputThisFrame ? _frameDirection : Velocity.normalized);
@@ -601,7 +666,8 @@ namespace GoodbyeBuddy
                 Position = _framePosition,
                 Rotation = _rb.rotation,
                 Velocity = Velocity,
-                Grounded = _grounded
+                Grounded = _grounded,
+                Shrinked = _shrinked
             };
         }
 
@@ -682,6 +748,7 @@ namespace GoodbyeBuddy
         public bool Active { get; }
         public Vector2 Up { get; }
         public bool Growing { get; }
+        public bool Shrinking { get; }
         public Vector2 Input { get; }
         public Vector2 GroundNormal { get; }
         public Vector2 Velocity { get; }
@@ -710,6 +777,7 @@ namespace GoodbyeBuddy
         public float Rotation;
         public Vector2 Velocity;
         public bool Grounded;
+        public bool Shrinked;
     }
 
 
