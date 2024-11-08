@@ -2,17 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DamageObject : MonoBehaviour
-{
-    private void OnTriggerEnter2D(Collider2D collision)
+namespace GoodbyeBuddy {
+    public class DamageObject : MonoBehaviour
     {
-        if(collision.transform.CompareTag("Player")){
-            Debug.Log("Player Died");
-            collision.transform.GetComponent<PlayerRespawn>().PlayerDied();
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if(collision.transform.CompareTag("Player")){
+                Debug.Log("Player Died");
+                collision.transform.GetComponent<PlayerRespawn>().PlayerDied();
+            }
         }
-    }
-
-    public void PlatformSpikes(){
-        
     }
 }
