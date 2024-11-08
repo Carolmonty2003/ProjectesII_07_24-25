@@ -95,7 +95,7 @@ namespace GoodbyeBuddy
             _delta = delta;
             _time = time;
 
-            GatherInput(); //Usa la entrada del jugador (PlayerInput) para actualizar la dirección, el estado de salto y el crecimiento Growing del jugador.
+            GatherInput(); //Usa la entrada del jugador (PlayerInput) para actualizar la direcciï¿½n, el estado de salto y el crecimiento Growing del jugador.
         }
 
         public void TickFixedUpdate(float delta) //Procesa logica movimiento y fisicas
@@ -106,7 +106,7 @@ namespace GoodbyeBuddy
 
             RemoveTransientVelocity(); //elimina velicidad basura q se puede acumular
 
-            SetFrameData(); //Configura rotación, dirección y posición del jugador con marco actual, manteniendo consistencia en el estado.
+            SetFrameData(); //Configura rotaciï¿½n, direcciï¿½n y posiciï¿½n del jugador con marco actual, manteniendo consistencia en el estado.
 
             CalculateCollisions();
             CalculateDirection();
@@ -139,12 +139,10 @@ namespace GoodbyeBuddy
             _cachedQueryMode = Physics2D.queriesStartInColliders;
 
             _rb = GetComponent<Rigidbody2D>();
-            _rb.hideFlags = HideFlags.NotEditable;
 
             // Primary collider
             _collider = GetComponent<BoxCollider2D>();
             _collider.edgeRadius = CharacterSize.COLLIDER_EDGE_RADIUS;
-            _collider.hideFlags = HideFlags.NotEditable;
             _collider.sharedMaterial = _rb.sharedMaterial;
             _collider.enabled = true;
 
@@ -256,6 +254,7 @@ namespace GoodbyeBuddy
                 _groundHit = Physics2D.Raycast(point, -Up, (!Growing ? GrounderLength : GrounderLengthGrowed) + _currentStepDownLength, Stats.CollisionLayers);
 
                 if (!_groundHit) return false;
+                if (_groundHit.collider.isTrigger) return false;
 
                 if (Vector2.Angle(_groundHit.normal, Up) > Stats.MaxWalkableSlope)
                 {
