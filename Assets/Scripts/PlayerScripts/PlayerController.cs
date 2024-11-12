@@ -118,7 +118,7 @@ namespace GoodbyeBuddy
             Move();
 
             CalculateGrow();
-            //CalculateShrink();
+            CalculateShrink();
 
             CleanFrameData();
 
@@ -414,7 +414,7 @@ namespace GoodbyeBuddy
                 if (Growing)
                 {
 
-                    AddFrameForce(new Vector2(0, Stats.JumpPower * 0.75f)); 
+                    AddFrameForce(new Vector2(0, Stats.JumpPowerGrow)); 
                 }
                 else
                 {
@@ -591,8 +591,17 @@ namespace GoodbyeBuddy
                 return;
             }
 
-            var extraForce = new Vector2(0, _grounded ? 0 : -Stats.ExtraConstantGravity * (_endedJumpEarly && Velocity.y > 0 ? Stats.EndJumpEarlyExtraForceMultiplier : 1));
-            _constantForce.force = extraForce * _rb.mass;
+            if (Growing)
+            {
+                var extraForce = new Vector2(0, _grounded ? 0 : -Stats.ExtraConstantGravityGrow * (_endedJumpEarly && Velocity.y > 0 ? Stats.EndJumpEarlyExtraForceMultiplierGrow : 1));
+                _constantForce.force = extraForce * _rb.mass;
+
+            }
+            else
+            {
+                var extraForce = new Vector2(0, _grounded ? 0 : -Stats.ExtraConstantGravity * (_endedJumpEarly && Velocity.y > 0 ? Stats.EndJumpEarlyExtraForceMultiplier : 1));
+                _constantForce.force = extraForce * _rb.mass;
+            }
 
             var targetSpeed = _hasInputThisFrame ? Stats.BaseSpeed : 0;
 
