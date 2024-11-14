@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +8,9 @@ namespace GoodbyeBuddy
     [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D), typeof(CapsuleCollider2D))]
     public class PlayerController : MonoBehaviour, IPlayerController, IPhysicsObject
     {
+        private int _shrinkCount = 0;
+        private Vector2 _initialPosition; //temporal-----------------------------------------------
+
         #region References
 
         private BoxCollider2D _collider;
@@ -82,6 +86,7 @@ namespace GoodbyeBuddy
             SetupCharacter();
 
             PhysicsSimulator.Instance.AddPlayer(this);
+            _initialPosition = transform.position; //temporal----------------------------------------------------
         }
 
         //Elimina al jugador del simulador al destruir el objeto, para limpiar referencias.
@@ -149,7 +154,7 @@ namespace GoodbyeBuddy
             // Airborne collider
             _airborneCollider = GetComponent<CapsuleCollider2D>();
             _airborneCollider.size = new Vector2((_character.Width - SKIN_WIDTH * 2)/2f, _character.Height - SKIN_WIDTH * 2);
-            _airborneCollider.offset = new Vector2(0, _character.Height / 2);
+            _airborneCollider.offset = new Vector2(0.000001f, _character.Height / 2.1f);
             _airborneCollider.sharedMaterial = _rb.sharedMaterial;
 
             SetColliderMode(ColliderMode.Airborne);
@@ -317,8 +322,8 @@ namespace GoodbyeBuddy
             switch (mode)
             {
                 case ColliderMode.Standard:                   
-                    _collider.size = _character.StandingColliderSize;
-                    _collider.offset = _character.StandingColliderCenter;
+                    _collider.size = new Vector2(0.2f, 1.21f);
+                    _collider.offset = new Vector2(0,0.65f);
                     _airborneCollider.enabled = false;
                     break;
                 case ColliderMode.Shrinking:
@@ -459,9 +464,16 @@ namespace GoodbyeBuddy
         private void UpdateCapsuleColliderSize()
         {   
             Vector2 newSize = _airborneCollider.size;
-            newSize.x = !Growing ? _character.Width : (_character.GrowingWidth - SKIN_WIDTH * 2)/2;
+            newSize.x = !Growing ? _character.Width : (_character.GrowingWidth - SKIN_WIDTH * 2)/2.3f;
             newSize.y = !Growing ? _character.Height : (_character.GrowingHeight - SKIN_WIDTH * 2)-1;
             _airborneCollider.size = newSize;
+        }
+        IEnumerator Timer()
+        {
+            _rb.constraints = RigidbodyConstraints2D.FreezePositionY;
+            yield return new WaitForSeconds(0.05f);
+            _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+
         }
 
         private void ToggleGrowing(bool shouldGrow)
@@ -475,6 +487,7 @@ namespace GoodbyeBuddy
             {
                 if (!CanStand) return;
                 Growing = false;
+                StartCoroutine("Timer");
             }
 
 
@@ -511,8 +524,14 @@ namespace GoodbyeBuddy
         {
             if (shouldShrink)
             {
+                if(_shrinkCount >= Stats.MaxShrinksBeforeDeath)
+                {
+                    HandleDeathAndRestart();
+                    return;
+                }
                 _timeStartedShrinking = _time;
                 Shrinking = true;
+                _shrinkCount++;
                 SetColliderMode(ColliderMode.Shrinking);
             }
             else
@@ -521,6 +540,16 @@ namespace GoodbyeBuddy
                 Shrinking = false;
             }
         }
+        //temporal-----------------------------------------------------------
+        private void HandleDeathAndRestart()
+        {
+            // Reset position and state
+            RepositionImmediately(_initialPosition, resetVelocity: true);
+            _shrinkCount = 0; // Reset the shrink count
+            Shrinking = false;
+            SetColliderMode(ColliderMode.Standard);
+        }
+        //------------------------------------------------------------temporal
         #endregion
 
         #region Move
