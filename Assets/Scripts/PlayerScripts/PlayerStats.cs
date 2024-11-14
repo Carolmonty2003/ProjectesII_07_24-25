@@ -107,17 +107,17 @@ namespace GoodbyeBuddy
                 RayInset = RayInset
             };
 
-            s.StandingColliderSize = new Vector2(s.Width - COLLIDER_EDGE_RADIUS * 2, s.Height - s.StepHeight - COLLIDER_EDGE_RADIUS * 2);
+            s.StandingColliderSize = new Vector2((s.Width - COLLIDER_EDGE_RADIUS * 2)/2.5f, s.Height - s.StepHeight - COLLIDER_EDGE_RADIUS * 2);
             s.StandingColliderCenter = new Vector2(0, s.Height - s.StandingColliderSize.y / 2 - COLLIDER_EDGE_RADIUS);
 
             s.GrowingHeight = GrowHeight;
             s.GrowingWidth = GrowWidth;  
-            s.GrowColliderSize = new Vector2(s.GrowingWidth - COLLIDER_EDGE_RADIUS * 2, s.GrowingHeight - s.StepHeight + 0.4f); 
-            s.GrowingColliderCenter = new Vector2(0, s.GrowingHeight - s.GrowColliderSize.y / 2 - COLLIDER_EDGE_RADIUS - 0.8f);
+            s.GrowColliderSize = new Vector2((s.GrowingWidth - COLLIDER_EDGE_RADIUS * 2)/2.5f, s.GrowingHeight - s.StepHeight + 0.4f); 
+            s.GrowingColliderCenter = new Vector2(0, s.GrowingHeight - s.GrowColliderSize.y / 2 - COLLIDER_EDGE_RADIUS - 1.55f);
             
             s.ShrinkingHeight = ShrinkHeight;
             s.ShrinkingWidth = ShrinkWidth;  
-            s.ShrinkColliderSize = new Vector2(s.ShrinkingWidth - COLLIDER_EDGE_RADIUS * 2, s.ShrinkingHeight - s.StepHeight - COLLIDER_EDGE_RADIUS * 2); 
+            s.ShrinkColliderSize = new Vector2((s.ShrinkingWidth - COLLIDER_EDGE_RADIUS * 2)/2.5f, s.ShrinkingHeight - s.StepHeight - COLLIDER_EDGE_RADIUS * 2); 
             s.ShrinkingColliderCenter = new Vector2(0, s.ShrinkingHeight - s.ShrinkColliderSize.y / 2 - COLLIDER_EDGE_RADIUS);
 
             return s;

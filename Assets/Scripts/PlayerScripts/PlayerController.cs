@@ -148,7 +148,7 @@ namespace GoodbyeBuddy
 
             // Airborne collider
             _airborneCollider = GetComponent<CapsuleCollider2D>();
-            _airborneCollider.size = new Vector2(_character.Width - SKIN_WIDTH * 2, _character.Height - SKIN_WIDTH * 2);
+            _airborneCollider.size = new Vector2((_character.Width - SKIN_WIDTH * 2)/2f, _character.Height - SKIN_WIDTH * 2);
             _airborneCollider.offset = new Vector2(0, _character.Height / 2);
             _airborneCollider.sharedMaterial = _rb.sharedMaterial;
 
@@ -223,7 +223,7 @@ namespace GoodbyeBuddy
         private bool _shrinked;
         private float _currentStepDownLength;
         private float GrounderLength => _character.StepHeight + SKIN_WIDTH + 0.2f;
-        private float GrounderLengthGrowed => _character.StepHeight + SKIN_WIDTH + 1;
+        private float GrounderLengthGrowed => _character.StepHeight + SKIN_WIDTH + 1.6f;
         private Vector2 RayPoint => _framePosition + Up * (_character.StepHeight + SKIN_WIDTH);
 
         private void CalculateCollisions()
@@ -459,8 +459,8 @@ namespace GoodbyeBuddy
         private void UpdateCapsuleColliderSize()
         {   
             Vector2 newSize = _airborneCollider.size;
-            newSize.x = !Growing ? _character.Width : _character.GrowingWidth - SKIN_WIDTH * 2;
-            newSize.y = !Growing ? _character.Height : _character.GrowingHeight - SKIN_WIDTH * 2;
+            newSize.x = !Growing ? _character.Width : (_character.GrowingWidth - SKIN_WIDTH * 2)/2;
+            newSize.y = !Growing ? _character.Height : (_character.GrowingHeight - SKIN_WIDTH * 2)-1;
             _airborneCollider.size = newSize;
         }
 

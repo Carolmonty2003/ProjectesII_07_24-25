@@ -177,15 +177,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4181783084724045822, guid: a758f4c47c8e05242aa9c708a1c99374, type: 3}
       propertyPath: m_Size.x
-      value: 0.65989995
+      value: 0.42999998
       objectReference: {fileID: 0}
     - target: {fileID: 4181783084724045822, guid: a758f4c47c8e05242aa9c708a1c99374, type: 3}
       propertyPath: m_Size.y
-      value: 1.22
+      value: 1.3100001
+      objectReference: {fileID: 0}
+    - target: {fileID: 4181783084724045822, guid: a758f4c47c8e05242aa9c708a1c99374, type: 3}
+      propertyPath: m_Offset.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4181783084724045822, guid: a758f4c47c8e05242aa9c708a1c99374, type: 3}
       propertyPath: m_Offset.y
-      value: 0.63
+      value: 0.675
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273432568383698333, guid: a758f4c47c8e05242aa9c708a1c99374, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.07000017
       objectReference: {fileID: 0}
     - target: {fileID: 7857466331382009355, guid: a758f4c47c8e05242aa9c708a1c99374, type: 3}
       propertyPath: m_Name
@@ -777,6 +785,10 @@ PrefabInstance:
     - target: {fileID: 5822269935239980319, guid: d9cc96b6c56eee748b233cc5f5228277, type: 3}
       propertyPath: m_Name
       value: Button
+      objectReference: {fileID: 0}
+    - target: {fileID: 5822269935239980319, guid: d9cc96b6c56eee748b233cc5f5228277, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8206740186140256790, guid: d9cc96b6c56eee748b233cc5f5228277, type: 3}
       propertyPath: m_RootOrder
