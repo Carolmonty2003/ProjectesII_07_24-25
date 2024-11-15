@@ -59,11 +59,19 @@ namespace GoodbyeBuddy
 
         private void Patrol()
         {
+            if (patrolPoints.Length == 0)
+            {
+                Debug.Log("No hay puntos de patrulla asignados.");
+                return;
+            }
+
             if (patrolPoints.Length == 0) return;
 
             Transform targetPoint = patrolPoints[currentPatrolIndex];
             transform.position = Vector2.MoveTowards(transform.position, targetPoint.position, idleSpeed * Time.deltaTime);
-
+            
+            Debug.Log($"Moviendo hacia el punto {currentPatrolIndex}");
+            
             if (Vector2.Distance(transform.position, targetPoint.position) < 0.1f)
             {
                 currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Length;
