@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ButtonScript : MonoBehaviour
 {
-    public PlatformScript platformScript; // Referencia al script de la plataforma
+    public PlatformScript platformScript;
 
     private bool isPressed = false;
 
@@ -11,8 +11,7 @@ public class ButtonScript : MonoBehaviour
         if (other.CompareTag("Player") && !isPressed)
         {
             isPressed = true;
-            platformScript.ActivatePlatform(); // Llama a la función en el script de la plataforma
-            // Opcional: Cambia el aspecto del botón para indicar que está desactivado
+            platformScript.ActivatePlatform();
             GetComponent<SpriteRenderer>().color = Color.gray;
         }
     }
