@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class PlatformSpikeTimer : MonoBehaviour
 {
-    public float spikeInterval = 5f;        // Tiempo entre activaciones de los pinchos
-    public float spikeDuration = 3f;        // Tiempo que los pinchos están activos
+    public float spikeInterval = 5f;
+    public float spikeDuration = 3f;
 
-    private SpriteRenderer spriteRenderer;  // Referencia al SpriteRenderer
-    private Collider2D spikeCollider;       // Referencia al Collider2D
+    private SpriteRenderer spriteRenderer;
+    private Collider2D spikeCollider;
 
      private void Start()
     {
@@ -22,30 +22,26 @@ public class PlatformSpikeTimer : MonoBehaviour
      {
         while (true)
         {
-            // Activa los pinchos
             ActivateSpikes();
 
-            // Espera el tiempo que los pinchos están activos
             yield return new WaitForSeconds(spikeDuration);
 
-               // Desactiva los pinchos
             DeactivateSpikes();
 
-            // Espera el tiempo de intervalo entre activaciones
             yield return new WaitForSeconds(spikeInterval);
         }
     }
 
     private void ActivateSpikes()
     {
-        spriteRenderer.enabled = true;  // Muestra el sprite de los pinchos
-        spikeCollider.enabled = true;   // Activa el daño de los pinchos
+        spriteRenderer.enabled = true;
+        spikeCollider.enabled = true;
     }
 
     private void DeactivateSpikes()
     {
-        spriteRenderer.enabled = false; // Oculta el sprite de los pinchos
-        spikeCollider.enabled = false;  // Desactiva el daño de los pinchos
+        spriteRenderer.enabled = false;
+        spikeCollider.enabled = false;
     }
 }
 
