@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 using UnityEngine.TextCore.Text;
 
@@ -570,11 +571,15 @@ namespace GoodbyeBuddy
         Vector2 timerSmall = new Vector2(0.5f,0.5f);
         private void ShrinkingColliderSize(int _count)
         {
-            SetColliderMode(ColliderMode.Shrinking);
-            _character.ShrinkingFactor = 2.6f;
+             SetColliderMode(ColliderMode.Shrinking);
+             _character.ShrinkingFactor = 2.6f;
 
-           _collider.size = Vector2.SmoothDamp(_collider.size, new Vector2(0.2f / (PlayerController._shrinkCount * _character.ShrinkingFactor), 1.2f / (PlayerController._shrinkCount * _character.ShrinkingFactor)), ref timerSmall, 0.03f);
+            _collider.size = Vector2.SmoothDamp(_collider.size, new Vector2(0.2f / (PlayerController._shrinkCount * _character.ShrinkingFactor), 1.2f / (PlayerController._shrinkCount * _character.ShrinkingFactor)), ref timerSmall, 0.03f);
+            _airborneCollider.size = Vector2.SmoothDamp(_airborneCollider.size, new Vector2(0.3113f / (PlayerController._shrinkCount * _character.ShrinkingFactor), 1.315f / (PlayerController._shrinkCount * _character.ShrinkingFactor)), ref timerSmall, 0.03f);
 
+            //_airborneCollider.offset = new Vector2(0.000001f, _character.Height / 2.1f);
+
+            //rayCast
 
         }
 
