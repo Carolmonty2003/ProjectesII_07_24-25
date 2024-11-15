@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0ce135eb2fe6874cb3c402f13d306c2, type: 3}
+  m_Name: Player Stats
+  m_EditorClassIdentifier: 
+  PlayerLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  CollisionLayers:
+    serializedVersion: 2
+    m_Bits: 65
+  CharacterSize:
+    Height: 1.355
+    Width: 0.6626
+    StepHeight: 0.05
+    GrowHeight: 4.35
+    GrowWidth: 2.9
+    ShrinkHeight: 0.3
+    ShrinkWidth: 0.1
+    RayInset: 0.1
+  VerticalDeadZoneThreshold: 0.3
+  HorizontalDeadZoneThreshold: 0.1
+  PositionCorrectionMode: 0
+  BaseSpeed: 5
+  Acceleration: 10
+  Friction: 70
+  AirFrictionMultiplier: 0.5
+  DirectionCorrectionMultiplier: 3
+  MaxWalkableSlope: 46
+  ExtraConstantGravity: 40
+  BufferedJumpTime: 0.15
+  CoyoteTime: 0.15
+  JumpPower: 20
+  EndJumpEarlyExtraForceMultiplier: 3
+  MaxAirJumps: 0
+  ExtraConstantGravityGrow: 40
+  JumpPowerGrow: 20
+  EndJumpEarlyExtraForceMultiplierGrow: 3
+  AllowGrowing: 1
+  GrowSlowDownTime: 0.5
+  GrowSpeedModifier: 0.5
+  AllowShrinking: 0
+  ShrinkSlowDownTime: 0.5
+  ShrinkSpeedModifier: 0.5
+  MaxShrinksBeforeDeath: 5
+  NegativeYVelocityNegation: 0.2
+  ExternalVelocityDecayRate: 0.5
