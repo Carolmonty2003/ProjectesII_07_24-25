@@ -27,6 +27,7 @@ namespace GoodbyeBuddy
         public event Action<bool> ToggledPlayer;
 
         public bool Active { get; private set; } = true;
+        public bool IsFacingRight { get; private set; }
         public Vector2 Up { get; private set; }
         public Vector2 Right { get; private set; }
         public bool Growing { get; private set; }
@@ -361,6 +362,15 @@ namespace GoodbyeBuddy
                 var angle = Vector2.Angle(GroundNormal, Up);
                 if (angle < Stats.MaxWalkableSlope) _frameDirection.y = _frameDirection.x * -GroundNormal.x / GroundNormal.y;
             }
+
+            if (_frameInput.Move.x > 0)
+            {
+                IsFacingRight = true;
+            }
+            else if (_frameInput.Move.x < 0)
+            {
+                IsFacingRight = false;
+            } 
 
             _frameDirection = _frameDirection.normalized;
         }
