@@ -5,9 +5,6 @@ namespace GoodbyeBuddy
     public class HandleShrinkScript : MonoBehaviour
     {
         [SerializeField] private bool _isActivated;
-
-
-        
         private void OnTriggerStay2D(Collider2D other)
         {
             if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
@@ -22,9 +19,6 @@ namespace GoodbyeBuddy
                             player.ActivateShrink(); // Allow shrinking when lever is activated
                         }
                     }
-                    
-
-
                 }
             }
         }
