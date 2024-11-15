@@ -580,6 +580,7 @@ namespace GoodbyeBuddy
             //_airborneCollider.offset = new Vector2(0.000001f, _character.Height / 2.1f);
 
             //rayCast
+            float shrinkModifier = PlayerController._shrinkCount * _character.ShrinkingFactor;//test----------------
 
         }
 
@@ -784,9 +785,9 @@ namespace GoodbyeBuddy
 
             var pos = (Vector2)transform.position;
 
-            Gizmos.color = Color.red;
+            Gizmos.color = UnityEngine.Color.red;
             Gizmos.DrawWireCube(pos + Vector2.up * _character.Height / 2, new Vector3(_character.Width, _character.Height));
-            Gizmos.color = Color.magenta;
+            Gizmos.color = UnityEngine.Color.magenta;
 
             var rayStart = pos + Vector2.up * _character.StepHeight;
             var rayDir = Vector3.down * _character.StepHeight;
