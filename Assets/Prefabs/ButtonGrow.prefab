@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4504383442053153724}
   - component: {fileID: -2256551360553728602}
   - component: {fileID: -4657603457319412939}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ButtonGrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -6,13 +6,16 @@ namespace GoodbyeBuddy
     {
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.TryGetComponent(out PlayerController player))
+            if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
             {
-                //player.IsBottonActive = true;
-                var playerInput = player.GetComponent<PlayerInput>();
-                if (playerInput != null)
+                if (other.TryGetComponent(out PlayerController player))
                 {
-                    playerInput.IsButtonNormalPressed = true;
+                    //player.IsBottonActive = true;
+                    var playerInput = player.GetComponent<PlayerInput>();
+                    if (playerInput != null)
+                    {
+                        playerInput.IsButtonNormalPressed = true;
+                    }
                 }
             }
         }

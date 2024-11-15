@@ -53,10 +53,10 @@ namespace GoodbyeBuddy
             {
                 _isGrowing = !_isGrowing;
             }
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                _isShrinking = true;
-            }
+            //if (Input.GetKeyDown(KeyCode.E))
+            //{
+            //    _isShrinking = true;
+            //}
             else if (IsButtonGrowPressed)
             {
                 _isGrowing = true;

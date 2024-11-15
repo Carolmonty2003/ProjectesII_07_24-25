@@ -1,12 +1,18 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 namespace GoodbyeBuddy
 {
     [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D), typeof(CapsuleCollider2D))]
     public class PlayerController : MonoBehaviour, IPlayerController, IPhysicsObject
     {
+        public static int _shrinkCount = 0;
+        private Vector2 _initialPosition; //temporal-----------------------------------------------
+
         #region References
 
         private BoxCollider2D _collider;
@@ -83,6 +89,7 @@ namespace GoodbyeBuddy
             SetupCharacter();
 
             PhysicsSimulator.Instance.AddPlayer(this);
+            _initialPosition = transform.position; //temporal----------------------------------------------------
         }
 
         //Elimina al jugador del simulador al destruir el objeto, para limpiar referencias.
@@ -149,8 +156,8 @@ namespace GoodbyeBuddy
 
             // Airborne collider
             _airborneCollider = GetComponent<CapsuleCollider2D>();
-            _airborneCollider.size = new Vector2(_character.Width - SKIN_WIDTH * 2, _character.Height - SKIN_WIDTH * 2);
-            _airborneCollider.offset = new Vector2(0, _character.Height / 2);
+            _airborneCollider.size = new Vector2((_character.Width - SKIN_WIDTH * 2)/2f, _character.Height - SKIN_WIDTH * 2);
+            _airborneCollider.offset = new Vector2(0.000001f, _character.Height / 2.1f);
             _airborneCollider.sharedMaterial = _rb.sharedMaterial;
 
             SetColliderMode(ColliderMode.Airborne);
@@ -224,7 +231,7 @@ namespace GoodbyeBuddy
         private bool _shrinked;
         private float _currentStepDownLength;
         private float GrounderLength => _character.StepHeight + SKIN_WIDTH + 0.2f;
-        private float GrounderLengthGrowed => _character.StepHeight + SKIN_WIDTH + 1;
+        private float GrounderLengthGrowed => _character.StepHeight + SKIN_WIDTH + 1.6f;
         private Vector2 RayPoint => _framePosition + Up * (_character.StepHeight + SKIN_WIDTH);
 
         private void CalculateCollisions()
@@ -268,7 +275,7 @@ namespace GoodbyeBuddy
 
         private IEnumerable<float> GenerateRayOffsets()
         {
-            var extent = _character.StandingColliderSize.x / 2 - _character.RayInset;
+            var extent = _character.StandingColliderSize.x / (!Growing ? 2 : 0.85f) - _character.RayInset;
             var offsetAmount = extent / RAY_SIDE_COUNT;
             for (var i = 1; i < RAY_SIDE_COUNT + 1; i++)
             {
@@ -299,6 +306,7 @@ namespace GoodbyeBuddy
                 }
                 else
                 {
+
                     SetColliderMode(ColliderMode.Standard);
                 }
             }
@@ -308,6 +316,11 @@ namespace GoodbyeBuddy
                 _timeLeftGrounded = _time;
                 _rb.gravityScale = GRAVITY_SCALE;
                 SetColliderMode(ColliderMode.Airborne);
+                if (_endedJumpEarly)
+                {
+                    StartCoroutine("Timer");
+
+                }
             }
         }
 
@@ -317,23 +330,36 @@ namespace GoodbyeBuddy
 
             switch (mode)
             {
-                case ColliderMode.Standard:                   
-                    _collider.size = _character.StandingColliderSize;
-                    _collider.offset = _character.StandingColliderCenter;
-                    _airborneCollider.enabled = false;
-                    break;
                 case ColliderMode.Shrinking:
-                    _collider.size = _character.ShrinkColliderSize;
-                    _collider.offset = _character.ShrinkingColliderCenter;
+                    //_collider.size = _character.ShrinkColliderSize;
+                    //_collider.offset = _character.ShrinkingColliderCenter;
                     _airborneCollider.enabled = false;
+                    _collider.enabled = true;
+
+                    
                     break;
-                case ColliderMode.Growing:
-                    _collider.size = _character.GrowColliderSize;
-                    _collider.offset = _character.GrowingColliderCenter;
+                case ColliderMode.Standard:                   
+                    _collider.size = new Vector2(0.2f, 1.2f);
+                    _collider.offset = new Vector2(0,0.67f);
                     _airborneCollider.enabled = false;
+                    _collider.enabled = true;
+
+
+                    break;
+               
+                case ColliderMode.Growing:
+                    _collider.size = new Vector2(1.136f, 4.09f);
+                    _collider.offset = new Vector2(0,0.63f);
+                    _airborneCollider.enabled = false;
+                    _collider.enabled = true;
+
+
                     break;
                 case ColliderMode.Airborne:
                     _airborneCollider.enabled = true;
+                    _collider.enabled = false;
+
+
                     break;
             }
         }
@@ -469,9 +495,16 @@ namespace GoodbyeBuddy
         private void UpdateCapsuleColliderSize()
         {   
             Vector2 newSize = _airborneCollider.size;
-            newSize.x = !Growing ? _character.Width : _character.GrowingWidth - SKIN_WIDTH * 2;
-            newSize.y = !Growing ? _character.Height : _character.GrowingHeight - SKIN_WIDTH * 2;
+            newSize.x = !Growing ? _character.Width : (_character.GrowingWidth - SKIN_WIDTH * 2)/2.3f;
+            newSize.y = !Growing ? _character.Height : (_character.GrowingHeight - SKIN_WIDTH * 2)-1;
             _airborneCollider.size = newSize;
+        }
+        IEnumerator Timer()
+        {
+            _rb.constraints = RigidbodyConstraints2D.FreezePositionY | RigidbodyConstraints2D.FreezeRotation;
+            yield return new WaitForSeconds(0.05f);
+            _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+
         }
 
         private void ToggleGrowing(bool shouldGrow)
@@ -485,6 +518,7 @@ namespace GoodbyeBuddy
             {
                 if (!CanStand) return;
                 Growing = false;
+                StartCoroutine("Timer");
             }
 
 
@@ -507,30 +541,59 @@ namespace GoodbyeBuddy
 
         private void CalculateShrink()
         {
-            if (!Shrinking && _playerInput.Gather().Shrink)
+            if (_shrinkCount >= 1 )
             {
-                ToggleShrinking(true);
+                Shrinking = true;
             }
-            else
-            {
-                ToggleShrinking(false);
-            }
+            _character.ShrinkingCounter = _shrinkCount;
+
+            //CONTADOR DE N PEQUEÑOS
+
+            //HACER PEQUEÑO EL COLLDIER
+
+            //HACER PEQUENA LA IMAGEN
+
+
+
+            //if (!Shrinking && _playerInput.Gather().Shrink)
+            //{
+            //    ToggleShrinking(true);
+            //}
+            //else
+            //{
+            //    ToggleShrinking(false);
+            //}
         }
 
-        private void ToggleShrinking(bool shouldShrink)
+        internal void ActivateShrink()
         {
-            if (shouldShrink)
-            {
-                _timeStartedShrinking = _time;
-                Shrinking = true;
-                SetColliderMode(ColliderMode.Shrinking);
-            }
-            else
-            {
-                if (!CanStand) return;
-                Shrinking = false;
-            }
+            _shrinkCount++;
+            IncressShrinking(_shrinkCount);
+ 
         }
+
+        
+        private void IncressShrinking(int _count)
+        {
+            ShrinkingColliderSize(_count);
+        }
+
+        Vector2 timerSmall = new Vector2(0.5f,0.5f);
+        private void ShrinkingColliderSize(int _count)
+        {
+             SetColliderMode(ColliderMode.Shrinking);
+             _character.ShrinkingFactor = 2.6f;
+
+            _collider.size = Vector2.SmoothDamp(_collider.size, new Vector2(0.2f / (PlayerController._shrinkCount * _character.ShrinkingFactor), 1.2f / (PlayerController._shrinkCount * _character.ShrinkingFactor)), ref timerSmall, 0.03f);
+            _airborneCollider.size = Vector2.SmoothDamp(_airborneCollider.size, new Vector2(0.3113f / (PlayerController._shrinkCount * _character.ShrinkingFactor), 1.315f / (PlayerController._shrinkCount * _character.ShrinkingFactor)), ref timerSmall, 0.03f);
+
+            //_airborneCollider.offset = new Vector2(0.000001f, _character.Height / 2.1f);
+
+            //rayCast
+            float shrinkModifier = PlayerController._shrinkCount * _character.ShrinkingFactor;//test----------------
+
+        }
+
         #endregion
 
         #region Move
@@ -732,9 +795,9 @@ namespace GoodbyeBuddy
 
             var pos = (Vector2)transform.position;
 
-            Gizmos.color = Color.red;
+            Gizmos.color = UnityEngine.Color.red;
             Gizmos.DrawWireCube(pos + Vector2.up * _character.Height / 2, new Vector3(_character.Width, _character.Height));
-            Gizmos.color = Color.magenta;
+            Gizmos.color = UnityEngine.Color.magenta;
 
             var rayStart = pos + Vector2.up * _character.StepHeight;
             var rayDir = Vector3.down * _character.StepHeight;
@@ -746,6 +809,7 @@ namespace GoodbyeBuddy
             }
         }
 
+        
         #endregion
     }
 

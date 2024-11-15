@@ -50,6 +50,7 @@ namespace GoodbyeBuddy
         [Header("Shrink"), Space] public bool AllowShrinking;
         public float ShrinkSlowDownTime = 0.5f;
         public float ShrinkSpeedModifier = 0.5f;
+        public int MaxShrinksBeforeDeath = 5;
 
         // Moving Platforms
         [Header("Moving Platforms"), Space] public float NegativeYVelocityNegation = 0.2f;
@@ -69,13 +70,13 @@ namespace GoodbyeBuddy
     public class CharacterSize
     {
         public const float STEP_BUFFER = 0.05f;
-        public const float COLLIDER_EDGE_RADIUS = 0.05f;
+        public const float COLLIDER_EDGE_RADIUS = 0.03f;
 
         [Range(0.1f, 10), Tooltip("How tall you are. This includes a collider and your step height.")]
-        public float Height = 1.8f;
+        public float Height = 1.355f;
 
         [Range(0.1f, 10), Tooltip("The width of your collider")]
-        public float Width = 0.4f;
+        public float Width = 0.6626f;
 
         [Range(STEP_BUFFER, 15), Tooltip("Step height allows you to step over rough terrain like steps and rocks.")]
         public float StepHeight = 0.5f;
@@ -107,17 +108,17 @@ namespace GoodbyeBuddy
                 RayInset = RayInset
             };
 
-            s.StandingColliderSize = new Vector2(s.Width - COLLIDER_EDGE_RADIUS * 2, s.Height - s.StepHeight - COLLIDER_EDGE_RADIUS * 2);
+            s.StandingColliderSize = new Vector2((s.Width - COLLIDER_EDGE_RADIUS * 2)/1.45f, s.Height - s.StepHeight - COLLIDER_EDGE_RADIUS * 2);
             s.StandingColliderCenter = new Vector2(0, s.Height - s.StandingColliderSize.y / 2 - COLLIDER_EDGE_RADIUS);
 
             s.GrowingHeight = GrowHeight;
             s.GrowingWidth = GrowWidth;  
-            s.GrowColliderSize = new Vector2(s.GrowingWidth - COLLIDER_EDGE_RADIUS * 2, s.GrowingHeight - s.StepHeight + 0.4f); 
-            s.GrowingColliderCenter = new Vector2(0, s.GrowingHeight - s.GrowColliderSize.y / 2 - COLLIDER_EDGE_RADIUS - 0.8f);
+            s.GrowColliderSize = new Vector2(1, s.GrowingHeight - s.StepHeight + 0.4f); 
+            s.GrowingColliderCenter = new Vector2(0, s.GrowingHeight - s.GrowColliderSize.y / 2 - COLLIDER_EDGE_RADIUS - 1.55f);
             
             s.ShrinkingHeight = ShrinkHeight;
             s.ShrinkingWidth = ShrinkWidth;  
-            s.ShrinkColliderSize = new Vector2(s.ShrinkingWidth - COLLIDER_EDGE_RADIUS * 2, s.ShrinkingHeight - s.StepHeight - COLLIDER_EDGE_RADIUS * 2); 
+            s.ShrinkColliderSize = new Vector2((s.ShrinkingWidth - COLLIDER_EDGE_RADIUS * 2)/2.5f, s.ShrinkingHeight - s.StepHeight - COLLIDER_EDGE_RADIUS * 2); 
             s.ShrinkingColliderCenter = new Vector2(0, s.ShrinkingHeight - s.ShrinkColliderSize.y / 2 - COLLIDER_EDGE_RADIUS);
 
             return s;
@@ -141,13 +142,6 @@ namespace GoodbyeBuddy
             {
                 GrowHeight = minGrowHeight;
                 Log("Crouch height must be larger than step height");
-            }
-
-            var minShrinkHeight = StepHeight - STEP_BUFFER;
-
-            if (ShrinkHeight < minShrinkHeight)
-            {
-                //die-------------------------------------------------------------------------------
             }
 
             void Log(string text)
@@ -179,6 +173,9 @@ namespace GoodbyeBuddy
         
         // Shrinking
         public Vector2 ShrinkColliderSize;
+        public int ShrinkingCounter;
+        public float ShrinkingFactor;
+
         public float ShrinkingHeight;
         public float ShrinkingWidth;
         public Vector2 ShrinkingColliderCenter;
