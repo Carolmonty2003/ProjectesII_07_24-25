@@ -194,6 +194,8 @@ namespace GoodbyeBuddy
 
         private void HandleGrowing()
         {
+            _character.ShrinkingFactor = 1.2f;
+
             if (!_growing && _player.Growing)
             {
                 _source.PlayOneShot(_slideClips[Random.Range(0, _slideClips.Length)], Mathf.InverseLerp(0, 5, Mathf.Abs(_player.Velocity.x)));
@@ -208,7 +210,14 @@ namespace GoodbyeBuddy
             {
                 var heightPercentage = _character.GrowingHeight / _character.Height;
                 var widthPercentage = _character.GrowingWidth / _character.Width;
+                if (_player.Shrinking)
+                {
+                    _sprite.size = Vector2.SmoothDamp(_sprite.size, new Vector2( 0.66f / (PlayerController._shrinkCount * _character.ShrinkingFactor) ,  1.35f / (PlayerController._shrinkCount * _character.ShrinkingFactor)), ref _currentGrowSizeVelocity, 0.03f);
+
+                }
+                else { 
                 _sprite.size = Vector2.SmoothDamp(_sprite.size, new Vector2(_growing ? _character.Width * widthPercentage : _character.Width, _growing ? _character.Height * heightPercentage : _character.Height), ref _currentGrowSizeVelocity, 0.03f);
+                }
             }
         }
 

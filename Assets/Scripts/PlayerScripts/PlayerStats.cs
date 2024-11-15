@@ -113,7 +113,7 @@ namespace GoodbyeBuddy
 
             s.GrowingHeight = GrowHeight;
             s.GrowingWidth = GrowWidth;  
-            s.GrowColliderSize = new Vector2((s.GrowingWidth - COLLIDER_EDGE_RADIUS * 2)/2.5f, s.GrowingHeight - s.StepHeight + 0.4f); 
+            s.GrowColliderSize = new Vector2(1, s.GrowingHeight - s.StepHeight + 0.4f); 
             s.GrowingColliderCenter = new Vector2(0, s.GrowingHeight - s.GrowColliderSize.y / 2 - COLLIDER_EDGE_RADIUS - 1.55f);
             
             s.ShrinkingHeight = ShrinkHeight;
@@ -173,6 +173,9 @@ namespace GoodbyeBuddy
         
         // Shrinking
         public Vector2 ShrinkColliderSize;
+        public int ShrinkingCounter;
+        public float ShrinkingFactor;
+
         public float ShrinkingHeight;
         public float ShrinkingWidth;
         public Vector2 ShrinkingColliderCenter;
