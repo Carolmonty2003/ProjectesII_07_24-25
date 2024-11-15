@@ -104,5 +104,13 @@ namespace GoodbyeBuddy
                 playerTransform = player.transform;
             }
         }
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (collision.transform.CompareTag("Player"))
+            {
+                Debug.Log("Player Died");
+                collision.transform.GetComponent<PlayerRespawn>().PlayerDied();
+            }
+        }
     }
 }
