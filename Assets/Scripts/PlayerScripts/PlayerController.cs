@@ -565,64 +565,17 @@ namespace GoodbyeBuddy
         private void IncressShrinking(int _count)
         {
             ShrinkingColliderSize(_count);
-            ShrinkingVisualSize(_count);
         }
 
-        private void ShrinkingVisualSize(int _count)
-        {
-           
-        }
-
+        Vector2 timerSmall = new Vector2(0.5f,0.5f);
         private void ShrinkingColliderSize(int _count)
         {
             SetColliderMode(ColliderMode.Shrinking);
-            _character.ShrinkingFactor = 0.5f;
-            switch (_count)
-            {
-                case 0:
-                    Debug.Log("Case 0 Shrinking");
-                    //_collider.size = new Vector2(3f, 5f);
-                    //_collider.offset = new Vector2(0, 0.63f);
-                    break;
-                    
-                case 1:
-                    Debug.Log("Case 1 Shrinking");
-                    //_collider.size = new Vector2(0.2f, 1f);
-                    //_collider.offset = new Vector2(0, 0.63f);
-                    //_airborneCollider.size = new Vector2(0.25f, 1.1f);
+            _character.ShrinkingFactor = 2.6f;
+
+           _collider.size = Vector2.SmoothDamp(_collider.size, new Vector2(0.2f / (PlayerController._shrinkCount * _character.ShrinkingFactor), 1.2f / (PlayerController._shrinkCount * _character.ShrinkingFactor)), ref timerSmall, 0.03f);
 
 
-
-
-                    break;
-                case 2:
-                    //_collider.size = new Vector2(1.136f, 4.09f);
-                    //_collider.offset = new Vector2(0, 0.63f);
-                    //_airborneCollider.enabled = false;
-                    //_collider.enabled = true;
-
-
-                    break;
-                case 3:
-                    _airborneCollider.enabled = true;
-                    _collider.enabled = false;
-
-
-                    break;
-                case 4:
-                    _collider.size = new Vector2(0.2f, 1.2f);
-                    _collider.offset = new Vector2(0, 0.67f);
-                    _airborneCollider.enabled = false;
-                    _collider.enabled = true;
-
-                    break;
-
-                default:
-
-                    Debug.LogError("Int _Count out of size" + _count);
-
-                    break;
-            }
         }
 
         #endregion

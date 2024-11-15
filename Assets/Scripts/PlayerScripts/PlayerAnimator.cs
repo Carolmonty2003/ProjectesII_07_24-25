@@ -187,7 +187,7 @@ namespace GoodbyeBuddy
         }
         #endregion
 
-        #region Grow & Slide
+        #region Grow/Shrink & Slide
 
         private bool _growing;
         private Vector2 _currentGrowSizeVelocity;
