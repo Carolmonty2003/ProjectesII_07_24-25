@@ -493,6 +493,7 @@ namespace GoodbyeBuddy
             }
         }
         private void UpdateCapsuleColliderSize()
+
         {   
             Vector2 newSize = _airborneCollider.size;
             newSize.x = !Growing ? _character.Width : (_character.GrowingWidth - SKIN_WIDTH * 2)/2.3f;
@@ -661,6 +662,7 @@ namespace GoodbyeBuddy
             {
                 _rb.velocity += AdditionalFrameVelocities();
                 _rb.AddForce(_forceToApplyThisFrame * _rb.mass, ForceMode2D.Impulse);
+                return;
                 return;
             }
 
