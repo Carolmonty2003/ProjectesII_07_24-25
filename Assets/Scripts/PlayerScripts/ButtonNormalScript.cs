@@ -14,7 +14,7 @@ namespace GoodbyeBuddy
                     var playerInput = player.GetComponent<PlayerInput>();
                     if (playerInput != null)
                     {
-                        playerInput.IsButtonNormalPressed = true;
+                        //playerInput.IsButtonNormalPressed = true;
                     }
                 }
             }
