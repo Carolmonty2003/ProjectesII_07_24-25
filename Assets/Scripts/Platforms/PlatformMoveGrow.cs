@@ -11,18 +11,18 @@ namespace GoodbyeBuddy {
         {
             if (collision.gameObject.CompareTag("Player"))
             {
-                PlayerInput playerInput = collision.gameObject.GetComponent<PlayerInput>();
+                //PlayerInput playerInput = collision.gameObject.GetComponent<PlayerInput>();
 
-                if (playerInput != null && playerInput.Gather().Grow)
-                {
-                    float direction = collision.transform.position.x > transform.position.x ? -1 : 1;
+                //if (playerInput != null && playerInput.Gather().Grow)
+                //{
+                //    float direction = collision.transform.position.x > transform.position.x ? -1 : 1;
 
-                    if ((direction < 0 && transform.position.x > leftLimit.position.x) ||
-                        (direction > 0 && transform.position.x < rightLimit.position.x))
-                    {
-                        MovePlatform(direction);
-                    }
-                }
+                //    if ((direction < 0 && transform.position.x > leftLimit.position.x) ||
+                //        (direction > 0 && transform.position.x < rightLimit.position.x))
+                //    {
+                //        MovePlatform(direction);
+                //    }
+                //}
             }
         }
 

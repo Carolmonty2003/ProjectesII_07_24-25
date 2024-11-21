@@ -16,12 +16,12 @@ namespace GoodbyeBuddy {
         {
             if (collision.gameObject.CompareTag("Player"))
             {
-                PlayerInput playerInput = collision.gameObject.GetComponent<PlayerInput>();
+                //PlayerInput playerInput = collision.gameObject.GetComponent<PlayerInput>();
                 
-                if (playerInput != null && playerInput.Gather().Grow)
-                {
-                    StartCoroutine(DropPlatform());
-                }
+                //if (playerInput != null && playerInput.Gather().Grow)
+                //{
+                //    StartCoroutine(DropPlatform());
+                //}
             }
         }
 

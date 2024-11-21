@@ -33,7 +33,7 @@ namespace GoodbyeBuddy
 
 
         private AudioSource _source;
-        private IPlayerController _player;
+        //private IPlayerController _player;
         private Vector2 _defaultSpriteSize;
         private GeneratedCharacterSize _character;
         private Vector3 _trailOffset;
@@ -42,8 +42,8 @@ namespace GoodbyeBuddy
         private void Awake()
         {
             _source = GetComponent<AudioSource>();
-            _player = GetComponentInParent<IPlayerController>();
-            _character = _player.Stats.CharacterSize.GenerateCharacterSize();
+            //_player = GetComponentInParent<IPlayerController>();
+            //_character = _player.Stats.CharacterSize.GenerateCharacterSize();
             _defaultSpriteSize = new Vector2(1, _character.Height);
 
             _trailOffset = _trailRenderer.localPosition;
@@ -53,39 +53,39 @@ namespace GoodbyeBuddy
 
         private void OnEnable()
         {
-            _player.Jumped += OnJumped;
-            _player.GroundedChanged += OnGroundedChanged;
-            _player.Repositioned += PlayerOnRepositioned;
-            _player.ToggledPlayer += PlayerOnToggledPlayer;
+            //_player.Jumped += OnJumped;
+            //_player.GroundedChanged += OnGroundedChanged;
+            //_player.Repositioned += PlayerOnRepositioned;
+            //_player.ToggledPlayer += PlayerOnToggledPlayer;
 
             _moveParticles.Play();
         }
 
         private void OnDisable()
         {
-            _player.Jumped -= OnJumped;
-            _player.GroundedChanged -= OnGroundedChanged;
-            _player.Repositioned -= PlayerOnRepositioned;
-            _player.ToggledPlayer -= PlayerOnToggledPlayer;
+            //_player.Jumped -= OnJumped;
+            //_player.GroundedChanged -= OnGroundedChanged;
+            //_player.Repositioned -= PlayerOnRepositioned;
+            //_player.ToggledPlayer -= PlayerOnToggledPlayer;
 
             _moveParticles.Stop();
         }
 
         private void Update()
         {
-            if (_player == null) return;
+            //if (_player == null) return;
 
-            var xInput = _player.Input.x;
+            //var xInput = _player.Input.x;
 
-            SetParticleColor(-_player.Up, _moveParticles);
+            //SetParticleColor(-_player.Up, _moveParticles);
 
-            HandleSpriteFlip(xInput);
+            //HandleSpriteFlip(xInput);
 
-            HandleIdleSpeed(xInput);
+            //HandleIdleSpeed(xInput);
 
-            HandleCharacterTilt(xInput);
+            //HandleCharacterTilt(xInput);
 
-            HandleGrowing();
+            //HandleGrowing();
         }
 
         private void LateUpdate()
@@ -155,7 +155,7 @@ namespace GoodbyeBuddy
 
         private void HandleSpriteFlip(float xInput)
         {
-            if (_player.Input.x != 0) _sprite.flipX = xInput < 0;
+            //if (_player.Input.x != 0) _sprite.flipX = xInput < 0;
         }
 
         #endregion
@@ -172,18 +172,18 @@ namespace GoodbyeBuddy
         {
 
             var runningTilt = _grounded ? Quaternion.Euler(0, 0, -_runningTilt * xInput) : Quaternion.identity;
-            var targetRot = _grounded && _player.GroundNormal != _player.Up ? runningTilt * _player.GroundNormal : runningTilt * _player.Up;
+            //var targetRot = _grounded && _player.GroundNormal != _player.Up ? runningTilt * _player.GroundNormal : runningTilt * _player.Up;
 
             // Calculate the smooth damp effect
-            var smoothRot = Vector3.SmoothDamp(_anim.transform.up, targetRot, ref _currentTiltVelocity, _tiltSmoothTime);
+            //var smoothRot = Vector3.SmoothDamp(_anim.transform.up, targetRot, ref _currentTiltVelocity, _tiltSmoothTime);
 
-            if (Vector3.Angle(_player.Up, smoothRot) > _maxTilt)
-            {
-                smoothRot = Vector3.RotateTowards(_player.Up, smoothRot, Mathf.Deg2Rad * _maxTilt, 0f);
-            }
+            //if (Vector3.Angle(_player.Up, smoothRot) > _maxTilt)
+            //{
+               // smoothRot = Vector3.RotateTowards(_player.Up, smoothRot, Mathf.Deg2Rad * _maxTilt, 0f);
+            //}
 
             // Rotate towards the smoothed target
-            _anim.transform.up = smoothRot;
+            //_anim.transform.up = smoothRot;
         }
         #endregion
 
@@ -196,28 +196,28 @@ namespace GoodbyeBuddy
         {
             _character.ShrinkingFactor = 1.2f;
 
-            if (!_growing && _player.Growing)
-            {
-                _source.PlayOneShot(_slideClips[Random.Range(0, _slideClips.Length)], Mathf.InverseLerp(0, 5, Mathf.Abs(_player.Velocity.x)));
-                _growing = true;
-                CancelSquish();
-            }
-            else if (_growing && !_player.Growing)
-            {
-                _growing = false;
-            }
+            //if (!_growing && _player.Growing)
+            //{
+            //    _source.PlayOneShot(_slideClips[Random.Range(0, _slideClips.Length)], Mathf.InverseLerp(0, 5, Mathf.Abs(_player.Velocity.x)));
+            //    _growing = true;
+            //    CancelSquish();
+            //}
+            //else if (_growing && !_player.Growing)
+            //{
+            //    _growing = false;
+            //}
             if (!_isSquishing)
             {
                 var heightPercentage = _character.GrowingHeight / _character.Height;
                 var widthPercentage = _character.GrowingWidth / _character.Width;
-                if (_player.Shrinking)
-                {
-                    _sprite.size = Vector2.SmoothDamp(_sprite.size, new Vector2( 0.66f / (PlayerController._shrinkCount * _character.ShrinkingFactor) ,  1.35f / (PlayerController._shrinkCount * _character.ShrinkingFactor)), ref _currentGrowSizeVelocity, 0.03f);
+                //if (_player.Shrinking)
+                //{
+                //    //_sprite.size = Vector2.SmoothDamp(_sprite.size, new Vector2( 0.66f / (PlayerController._shrinkCount * _character.ShrinkingFactor) ,  1.35f / (PlayerController._shrinkCount * _character.ShrinkingFactor)), ref _currentGrowSizeVelocity, 0.03f);
 
-                }
-                else { 
-                _sprite.size = Vector2.SmoothDamp(_sprite.size, new Vector2(_growing ? _character.Width * widthPercentage : _character.Width, _growing ? _character.Height * heightPercentage : _character.Height), ref _currentGrowSizeVelocity, 0.03f);
-                }
+                //}
+                //else { 
+                ////_sprite.size = Vector2.SmoothDamp(_sprite.size, new Vector2(_growing ? _character.Width * widthPercentage : _character.Width, _growing ? _character.Height * heightPercentage : _character.Height), ref _currentGrowSizeVelocity, 0.03f);
+                //}
             }
         }
 
@@ -225,28 +225,28 @@ namespace GoodbyeBuddy
 
         #region Event Callbacks
 
-        private void OnJumped(JumpType type)
-        {
-            if (type is JumpType.Jump or JumpType.Coyote)
-            {
-                _anim.SetTrigger(JumpKey);
-                _anim.ResetTrigger(GroundedKey);
-                PlayRandomSound(_jumpClips, 0.2f, Random.Range(0.98f, 1.02f));
+        //private void OnJumped(JumpType type)
+        //{
+        //    if (type is JumpType.Jump or JumpType.Coyote)
+        //    {
+        //        _anim.SetTrigger(JumpKey);
+        //        _anim.ResetTrigger(GroundedKey);
+        //        PlayRandomSound(_jumpClips, 0.2f, Random.Range(0.98f, 1.02f));
 
-                // Only play particles when grounded (avoid coyote)
-                if (type is JumpType.Jump)
-                {
-                    SetColor(_jumpParticles);
-                    SetColor(_launchParticles);
-                    _jumpParticles.Play();
-                }
-            }
-            else if (type is JumpType.AirJump)
-            {
-                _source.PlayOneShot(_doubleJumpClip);
-                _doubleJumpParticles.Play();
-            }
-        }
+        //        // Only play particles when grounded (avoid coyote)
+        //        if (type is JumpType.Jump)
+        //        {
+        //            SetColor(_jumpParticles);
+        //            SetColor(_launchParticles);
+        //            _jumpParticles.Play();
+        //        }
+        //    }
+        //    else if (type is JumpType.AirJump)
+        //    {
+        //        _source.PlayOneShot(_doubleJumpClip);
+        //        _doubleJumpParticles.Play();
+        //    }
+        //}
 
         private bool _grounded;
         private Coroutine _squishRoutine;

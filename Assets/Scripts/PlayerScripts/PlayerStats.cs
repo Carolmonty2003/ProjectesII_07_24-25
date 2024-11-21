@@ -21,12 +21,14 @@ namespace GoodbyeBuddy
         public PositionCorrectionMode PositionCorrectionMode = PositionCorrectionMode.Velocity;
 
         // Movement
-        [Header("Movement"), Space] public float BaseSpeed = 9;
-        public float Acceleration = 50;
+        [Header("Movement"), Space] public float BaseSpeed = 10;
+        public float Acceleration = 0.2f;
         public float Friction = 30;
         public float AirFrictionMultiplier = 0.5f;
         public float DirectionCorrectionMultiplier = 3f;
         public float MaxWalkableSlope = 50;
+        public float Gravity = 10;
+
 
         // Jump
         [Header("Jump"), Space] public float ExtraConstantGravity = 40;
@@ -34,8 +36,8 @@ namespace GoodbyeBuddy
         public float CoyoteTime = 0.15f;
         public float JumpPower = 20;
         public float EndJumpEarlyExtraForceMultiplier = 3;
-        public int MaxAirJumps = 1; 
-        
+        public int MaxAirJumps = 1;
+
         // Jump Grow
         [Header("Jump Grow"), Space] public float ExtraConstantGravityGrow = 40;
         public float JumpPowerGrow = 20;
@@ -45,7 +47,7 @@ namespace GoodbyeBuddy
         [Header("Grow"), Space] public bool AllowGrowing;
         public float GrowSlowDownTime = 0.5f;
         public float GrowSpeedModifier = 0.5f;
-        
+
         // Shrink
         [Header("Shrink"), Space] public bool AllowShrinking;
         public float ShrinkSlowDownTime = 0.5f;
@@ -61,7 +63,7 @@ namespace GoodbyeBuddy
             var potentialPlayer = FindObjectsOfType<PlayerController>();
             foreach (var player in potentialPlayer)
             {
-                player.OnValidate();
+                //player.OnValidate();
             }
         }
     }
@@ -86,7 +88,7 @@ namespace GoodbyeBuddy
 
         [Range(0.1f, 10), Tooltip("A percentage of your width stat which determines your height while crouching. A smaller crouch requires more step height sacrifice")]
         public float GrowWidth = 0.6f;
-        
+
         [Range(0.1f, 10), Tooltip("A percentage of your height stat which determines your height while crouching. A smaller crouch requires more step height sacrifice")]
         public float ShrinkHeight = 0.3f;
 
@@ -108,17 +110,17 @@ namespace GoodbyeBuddy
                 RayInset = RayInset
             };
 
-            s.StandingColliderSize = new Vector2((s.Width - COLLIDER_EDGE_RADIUS * 2)/1.45f, s.Height - s.StepHeight - COLLIDER_EDGE_RADIUS * 2);
+            s.StandingColliderSize = new Vector2((s.Width - COLLIDER_EDGE_RADIUS * 2) / 1.45f, s.Height - s.StepHeight - COLLIDER_EDGE_RADIUS * 2);
             s.StandingColliderCenter = new Vector2(0, s.Height - s.StandingColliderSize.y / 2 - COLLIDER_EDGE_RADIUS);
 
             s.GrowingHeight = GrowHeight;
-            s.GrowingWidth = GrowWidth;  
-            s.GrowColliderSize = new Vector2(1, s.GrowingHeight - s.StepHeight + 0.4f); 
+            s.GrowingWidth = GrowWidth;
+            s.GrowColliderSize = new Vector2(1, s.GrowingHeight - s.StepHeight + 0.4f);
             s.GrowingColliderCenter = new Vector2(0, s.GrowingHeight - s.GrowColliderSize.y / 2 - COLLIDER_EDGE_RADIUS - 1.55f);
-            
+
             s.ShrinkingHeight = ShrinkHeight;
-            s.ShrinkingWidth = ShrinkWidth;  
-            s.ShrinkColliderSize = new Vector2((s.ShrinkingWidth - COLLIDER_EDGE_RADIUS * 2)/2.5f, s.ShrinkingHeight - s.StepHeight - COLLIDER_EDGE_RADIUS * 2); 
+            s.ShrinkingWidth = ShrinkWidth;
+            s.ShrinkColliderSize = new Vector2((s.ShrinkingWidth - COLLIDER_EDGE_RADIUS * 2) / 2.5f, s.ShrinkingHeight - s.StepHeight - COLLIDER_EDGE_RADIUS * 2);
             s.ShrinkingColliderCenter = new Vector2(0, s.ShrinkingHeight - s.ShrinkColliderSize.y / 2 - COLLIDER_EDGE_RADIUS);
 
             return s;
@@ -170,7 +172,7 @@ namespace GoodbyeBuddy
         public float GrowingHeight;
         public float GrowingWidth;
         public Vector2 GrowingColliderCenter;
-        
+
         // Shrinking
         public Vector2 ShrinkColliderSize;
         public int ShrinkingCounter;
@@ -180,7 +182,7 @@ namespace GoodbyeBuddy
         public float ShrinkingWidth;
         public Vector2 ShrinkingColliderCenter;
     }
-    
+
     [Serializable]
     public enum PositionCorrectionMode
     {

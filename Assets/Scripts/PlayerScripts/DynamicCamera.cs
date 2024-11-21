@@ -39,17 +39,17 @@ namespace GoodbyeBuddy {
         private void Update()
         {
             // Ajuste horizontal según la dirección del jugador
-            float baseOffsetX = _playerController.IsFacingRight ? offsetRight : offsetLeft;
+            //float baseOffsetX = _playerController.IsFacingRight ? offsetRight : offsetLeft;
 
             if (Mathf.Abs(_playerRigidbody.velocity.x) > 0.1f)
             {
                 // Permitir desplazamiento extra mientras camina
-                targetOffsetX = baseOffsetX + (_playerController.IsFacingRight ? maxHorizontalDisplacement : -maxHorizontalDisplacement);
+                //targetOffsetX = baseOffsetX + (_playerController.IsFacingRight ? maxHorizontalDisplacement : -maxHorizontalDisplacement);
             }
             else
             {
                 // Suavemente regresar al offset base cuando se detiene
-                targetOffsetX = baseOffsetX;
+                //targetOffsetX = baseOffsetX;
             }
 
             // Aplicar suavemente el offset horizontal

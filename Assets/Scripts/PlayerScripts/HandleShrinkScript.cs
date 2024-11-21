@@ -16,7 +16,7 @@ namespace GoodbyeBuddy
                         if (Input.GetKey(KeyCode.E))
                         {
                             _isActivated=true;
-                            player.ActivateShrink(); // Allow shrinking when lever is activated
+                            //player.ActivateShrink(); // Allow shrinking when lever is activated
                         }
                     }
                 }

@@ -55,6 +55,15 @@ namespace TarodevController
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Testing"",
+                    ""type"": ""Button"",
+                    ""id"": ""2295877a-373d-4320-8e25-30b4b16c002b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -165,6 +174,17 @@ namespace TarodevController
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
                     ""action"": ""Interaction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""10317e6e-5676-48d9-abd8-225b1b99cc7f"",
+                    ""path"": ""<Keyboard>/g"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Testing"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -755,6 +775,7 @@ namespace TarodevController
             m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
             m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
             m_Player_Interaction = m_Player.FindAction("Interaction", throwIfNotFound: true);
+            m_Player_Testing = m_Player.FindAction("Testing", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -831,6 +852,7 @@ namespace TarodevController
         private readonly InputAction m_Player_Move;
         private readonly InputAction m_Player_Jump;
         private readonly InputAction m_Player_Interaction;
+        private readonly InputAction m_Player_Testing;
         public struct PlayerActions
         {
             private @PlayerInputActions m_Wrapper;
@@ -838,6 +860,7 @@ namespace TarodevController
             public InputAction @Move => m_Wrapper.m_Player_Move;
             public InputAction @Jump => m_Wrapper.m_Player_Jump;
             public InputAction @Interaction => m_Wrapper.m_Player_Interaction;
+            public InputAction @Testing => m_Wrapper.m_Player_Testing;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -856,6 +879,9 @@ namespace TarodevController
                 @Interaction.started += instance.OnInteraction;
                 @Interaction.performed += instance.OnInteraction;
                 @Interaction.canceled += instance.OnInteraction;
+                @Testing.started += instance.OnTesting;
+                @Testing.performed += instance.OnTesting;
+                @Testing.canceled += instance.OnTesting;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -869,6 +895,9 @@ namespace TarodevController
                 @Interaction.started -= instance.OnInteraction;
                 @Interaction.performed -= instance.OnInteraction;
                 @Interaction.canceled -= instance.OnInteraction;
+                @Testing.started -= instance.OnTesting;
+                @Testing.performed -= instance.OnTesting;
+                @Testing.canceled -= instance.OnTesting;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -1054,6 +1083,7 @@ namespace TarodevController
             void OnMove(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
             void OnInteraction(InputAction.CallbackContext context);
+            void OnTesting(InputAction.CallbackContext context);
         }
         public interface IUIActions
         {

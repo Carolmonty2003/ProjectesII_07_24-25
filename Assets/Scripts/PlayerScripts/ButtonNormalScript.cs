@@ -11,11 +11,11 @@ namespace GoodbyeBuddy
                 if (other.TryGetComponent(out PlayerController player))
                 {
                     //player.IsBottonActive = true;
-                    var playerInput = player.GetComponent<PlayerInput>();
-                    if (playerInput != null)
-                    {
-                        //playerInput.IsButtonNormalPressed = true;
-                    }
+                    //var playerInput = player.GetComponent<PlayerInput>();
+                    //if (playerInput != null)
+                    //{
+                    //    //playerInput.IsButtonNormalPressed = true;
+                    //}
                 }
             }
         }
