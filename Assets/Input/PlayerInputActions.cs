@@ -179,7 +179,7 @@ namespace TarodevController
                 },
                 {
                     ""name"": """",
-                    ""id"": ""10317e6e-5676-48d9-abd8-225b1b99cc7f"",
+                    ""id"": ""b63d4216-2de0-4637-8fd5-0fa364a37b57"",
                     ""path"": ""<Keyboard>/g"",
                     ""interactions"": """",
                     ""processors"": """",

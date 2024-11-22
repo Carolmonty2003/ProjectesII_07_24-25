@@ -23,10 +23,9 @@ public class PlayerInputs : MonoBehaviour
     #region Player map
     public void OnMove(InputAction.CallbackContext callbackContext)
     {
-        if (callbackContext.performed)
-        {
-            myInputs.move = callbackContext.ReadValue<Vector2>();
-        }
+
+        myInputs.move = callbackContext.ReadValue<Vector2>();
+
 
 
     }
@@ -56,6 +55,14 @@ public class PlayerInputs : MonoBehaviour
         if (callbackContext.performed)
         {
             myInputs.interaction = true;
+            //temp
+            myInputs.shrink = true;
+
+
+        }
+        if (callbackContext.canceled)
+        {
+            myInputs.shrink = false;
 
         }
     }
@@ -64,7 +71,7 @@ public class PlayerInputs : MonoBehaviour
     {
         if (callbackContext.started)
         {
-            myInputs.grow = true;
+            myInputs.grow = !myInputs.grow;
         }
     }
 
@@ -86,4 +93,5 @@ public struct MyInputs
     public bool jump;
     public bool grow;
     public bool interaction;
+    internal bool shrink;
 }

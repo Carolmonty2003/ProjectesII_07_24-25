@@ -1,8 +1,6 @@
 using GoodbyeBuddy;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -19,9 +17,10 @@ public interface IState
 public class State : IState
 {
     public PlayerStats Stats;
-    protected Transform transform;
-    protected Rigidbody2D rb;
-    protected CapsuleCollider2D collider;
+    public Transform transform;
+    public Rigidbody2D rb;
+    public CapsuleCollider2D collider;
+    public float counterShrink = 1;
 
     //Movement Variables
     protected bool isGrounded;
@@ -34,14 +33,119 @@ public class State : IState
     public virtual void Update(float dt) { }
 }
 
-
-public class IdleWalkingState : State
+public class GrowState : BaseState
 {
 
+    public override void Start()
+    {
+        Debug.LogError("Growing");
+        transform.localScale = new Vector3(2, 2, 2);
+    }
+
+
+
+    public GrowState(Transform transform, PlayerStats stats, Rigidbody2D rb, CapsuleCollider2D collider) :
+        base(transform, stats, rb, collider)
+    {
+        this.transform = transform;
+        this.Stats = stats;
+        this.rb = rb;
+        this.collider = collider;
+    }
+
+    public override bool IsFinished()
+    {
+        if (!growinput)
+        {
+
+            return true;
+        }
+        return false;
+    }
+
+
+
+    public override IState NextState()
+    {
+        if (!growinput)
+        {
+            return new BaseState(transform, Stats, rb, collider);
+
+        }
+
+        return base.NextState();
+    }
+    public override void Finish()
+    {
+        base.Finish();
+    }
+}
+
+public class ShrinkState : BaseState
+{
+
+    public override void Start()
+    {
+        counterShrink++;
+        Debug.LogError("Shrink" + counterShrink);
+
+        counterShrink = Math.Clamp(counterShrink, 0, 4);
+        transform.localScale = new Vector3(1 / counterShrink, 1 / counterShrink, 1 / counterShrink);
+    }
+
+
+
+    public ShrinkState(Transform transform, PlayerStats stats, Rigidbody2D rb, CapsuleCollider2D collider, float counterShrink) :
+        base(transform, stats, rb, collider)
+    {
+        this.transform = transform;
+        this.Stats = stats;
+        this.rb = rb;
+        this.collider = collider;
+        this.counterShrink = counterShrink;
+    }
+
+    public override bool IsFinished()
+    {
+        if (shrinkinput)
+        {
+
+            return true;
+        }
+        return false;
+    }
+
+
+
+    public override IState NextState()
+    {
+        if (shrinkinput)
+        {
+            return new ShrinkState(transform, Stats, rb, collider, counterShrink);
+
+        }
+
+        return base.NextState();
+    }
+    public override void Finish()
+    {
+        base.Finish();
+    }
+}
+
+public class BaseState : State
+{
+    public bool growinput;
+    public bool shrinkinput;
+
     Vector2 targetMovementVector;
+    protected float jumpForce;
+    protected bool jumped;
+    private RaycastHit2D _groundHit;
+
     float _acceleration = 0;
 
-    public IdleWalkingState(Transform transform, PlayerStats stats, Rigidbody2D rb, CapsuleCollider2D collider)
+    public BaseState(Transform transform, PlayerStats stats, Rigidbody2D rb, CapsuleCollider2D collider)
     {
         this.transform = transform;
         this.Stats = stats;
@@ -51,6 +155,10 @@ public class IdleWalkingState : State
 
     public override void Start()
     {
+        Debug.LogError("Normal");
+        transform.localScale = new Vector3(1, 1, 1);
+
+
         if (rb == null)
         {
             //esto no se como cogerlo
@@ -62,94 +170,108 @@ public class IdleWalkingState : State
     }
     public override void Update(float dt)
     {
+        growinput = PlayerInputs._instance.myInputs.grow;
+        shrinkinput = PlayerInputs._instance.myInputs.shrink;
 
         targetMovementVector = Vector2.zero;
 
         //Movement
         float movementValue = PlayerInputs._instance.myInputs.move.x;
-        if (PlayerInputs._instance.myInputs.move.x != 0)
-        {
-            if (_acceleration <= Stats.BaseSpeed)
-            {
-                _acceleration += Stats.Acceleration;
-            }
-        }
-        else { _acceleration = Stats.BaseSpeed / 4; }
-        targetMovementVector = Vector2.right * movementValue * Stats.Acceleration;
 
-        Debug.LogError(movementValue);
+        targetMovementVector = Vector2.right * movementValue * Stats.BaseSpeed * 3;
+
         //Grounded
-        Vector2 checkPoint = rb.position + collider.offset + collider.size.y * Vector2.down * transform.localScale.y;
-        isGrounded = Physics2D.OverlapPoint(checkPoint - 0.05f * Vector2.down, 6);
+        isGrounded = PerformRay(rb.position);
 
-        //Gravity
-        if (!isGrounded)
-            targetMovementVector += Vector2.down * Stats.Gravity;
-        else
+        if (!jumped && PlayerInputs._instance.myInputs.jump)
         {
-            //Jump code
+            //rb.velocity = targetMovementVector += Vector2.up * Stats.JumpPower;
+            rb.AddForce(Vector2.up * Stats.JumpPower * transform.localScale.x, ForceMode2D.Impulse);
+            jumped = true;
         }
-        //rb.AddForce(targetMovementVector);
-        rb.velocity = targetMovementVector;
-        //isGrounded = true;
-    }
+        jumped = !isGrounded;
 
-    public override bool IsFinished()
-    {
-        if (!isGrounded)
+        if (Math.Abs(rb.velocity.x) <= Stats.BaseSpeed)
         {
-            //nextState = JumpFallState;
-            return false;
+            rb.AddForce(targetMovementVector * transform.localScale.x);
+
         }
-        return false;
-    }
-}
-
-public class JumpFallState : State
-{
-    private float coyoteTime;
-    private float coyoteTimeCounter;
-
-    public override void Start()
-    {
-        if (rb == null)
+        if (movementValue != 0)
         {
-            rb = GameObject.FindAnyObjectByType<MovementController>().gameObject.GetComponent<Rigidbody2D>();
-            transform = GameObject.FindAnyObjectByType<MovementController>().transform;
-            collider = GameObject.FindAnyObjectByType<MovementController>().gameObject.GetComponent<CapsuleCollider2D>();
-        }
-        coyoteTimeCounter = coyoteTime;
-    }
-    public override void Update(float dt)
-    {
-        //coyote time
-        if (isGrounded)
-        {
-            coyoteTimeCounter = coyoteTime;
+            PhysicsMaterial2D frictionLow = new PhysicsMaterial2D(); frictionLow.friction = 0.1f; frictionLow.bounciness = 0f;
+
+            rb.sharedMaterial = frictionLow;
+
+
         }
         else
         {
-            coyoteTime -= dt;
-        }
+            PhysicsMaterial2D frictionHigh = new PhysicsMaterial2D(); frictionHigh.friction = 0.4f; frictionHigh.bounciness = 0f;
 
-        //salto
-        if (PlayerInputs._instance.myInputs.jump && coyoteTimeCounter > 0)
-        {
-            rb.AddForce(Vector2.up * Stats.JumpPower);
-        }
+            rb.sharedMaterial = frictionHigh;
 
+        }
     }
+
 
     public override bool IsFinished()
     {
-        if (isGrounded)
+        if (growinput)
         {
-            //nextState = JumpFallState
-            return false;
+
+            return true;
+        }
+        if (shrinkinput)
+        {
+            return true;
+
         }
         return false;
     }
+
+
+    public override IState NextState()
+    {
+        if (growinput)
+        {
+            return new GrowState(transform, Stats, rb, collider);
+
+        }
+        if (shrinkinput)
+        {
+            return new ShrinkState(transform, Stats, rb, collider, counterShrink);
+
+
+        }
+
+        return base.NextState();
+    }
+    public override void Finish()
+    {
+        base.Finish();
+    }
+
+
+    public bool PerformRay(Vector2 point)
+    {
+
+        _groundHit = Physics2D.Raycast(point, Vector2.down, (transform.localScale.x * collider.size.y) / 2 + 0.1f, Stats.CollisionLayers);
+
+
+
+        if (!_groundHit) return false;
+        if (_groundHit.collider.isTrigger) return false;
+
+        if (Vector2.Angle(_groundHit.normal, Vector2.up) > Stats.MaxWalkableSlope)
+        {
+            return false;
+        }
+
+        return true;
+    }
 }
+
+
 
 public class MovementController : MonoBehaviour
 {
@@ -162,7 +284,7 @@ public class MovementController : MonoBehaviour
     {
         // Inicializa el estado inicial= 
 
-        currentState = new IdleWalkingState( //pasar a forma optima
+        currentState = new BaseState(
             GameObject.FindAnyObjectByType<MovementController>().transform,
             Stats,
             GameObject.FindAnyObjectByType<MovementController>().gameObject.GetComponent<Rigidbody2D>(),
@@ -170,11 +292,8 @@ public class MovementController : MonoBehaviour
         currentState.Start();
 
     }
-
-
-    void Update()
+    private void FixedUpdate()
     {
-
         if (currentState != null)
         {
             currentState.Update(Time.deltaTime);
@@ -189,6 +308,12 @@ public class MovementController : MonoBehaviour
         {
             Debug.LogError("CurrentState = null");
         }
+    }
+
+    void Update()
+    {
+
+
     }
 
 
