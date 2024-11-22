@@ -178,7 +178,7 @@ public class BaseState : State
         //Movement
         float movementValue = PlayerInputs._instance.myInputs.move.x;
 
-        targetMovementVector = Vector2.right * movementValue * Stats.BaseSpeed * 3;
+        targetMovementVector = Vector2.right * movementValue * Stats.BaseSpeed * 30;
 
         //Grounded
         isGrounded = PerformRay(rb.position);
@@ -191,11 +191,13 @@ public class BaseState : State
         }
         jumped = !isGrounded;
 
-        if (Math.Abs(rb.velocity.x) <= Stats.BaseSpeed)
-        {
-            rb.AddForce(targetMovementVector * transform.localScale.x);
+        rb.AddForce(targetMovementVector * transform.localScale.x);
 
+        if (Math.Abs(rb.velocity.x) > Stats.BaseSpeed)
+        {
+            rb.velocity = new Vector2(Stats.BaseSpeed * Mathf.Sign(rb.velocity.x), rb.velocity.y);
         }
+
         if (movementValue != 0)
         {
             PhysicsMaterial2D frictionLow = new PhysicsMaterial2D(); frictionLow.friction = 0.1f; frictionLow.bounciness = 0f;
