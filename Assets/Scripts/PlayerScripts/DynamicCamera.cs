@@ -1,8 +1,8 @@
 using UnityEngine;
 using Cinemachine;
 
-namespace GoodbyeBuddy {
-
+namespace GoodbyeBuddy
+{
     public class DynamicCamera : MonoBehaviour
     {
         public CinemachineVirtualCamera virtualCamera;
@@ -10,14 +10,17 @@ namespace GoodbyeBuddy {
         private PlayerController _playerController;
         private Rigidbody2D _playerRigidbody;
 
-        public float offsetRight = 1f; // Desplazamiento horizontal hacia la derecha
-        public float offsetLeft = -1f; // Desplazamiento horizontal hacia la izquierda
-        public float verticalOffsetAdjustment = 0f; // Ajuste vertical manual para centrar en Y
-
-        public float maxHorizontalDisplacement = 0.5f; // Máximo desplazamiento extra mientras camina
-        public float smoothReturnSpeed = 2f; // Velocidad de retorno al punto inicial
+        // Configuración para una cámara fluida y cinematográfica
+        public float offsetRight = 1.0f;
+        public float offsetLeft = -1.0f;
+        public float verticalOffsetAdjustment = 0.2f;
+        public float maxHorizontalDisplacement = 0.3f;
+        public float maxVerticalOffset = 0.15f;
+        public float smoothReturnSpeed = 1.8f;
+        public float maxVerticalSpeed = 6.0f;
 
         private float targetOffsetX;
+        private float targetOffsetY;
 
         private void Start()
         {
@@ -32,47 +35,75 @@ namespace GoodbyeBuddy {
             if (_playerRigidbody == null)
                 Debug.LogError("No se encontró Rigidbody2D en el PlayerController.");
 
-            // Establecer el valor inicial del offset X
             targetOffsetX = _framingTransposer.m_TrackedObjectOffset.x;
+            targetOffsetY = _framingTransposer.m_TrackedObjectOffset.y;
         }
 
         private void Update()
         {
-            // Ajuste horizontal según la dirección del jugador
+            UpdateHorizontalOffset();
+            UpdateVerticalOffset();
+            ApplyWeightedOffsets();
+        }
+
+        private void UpdateHorizontalOffset()
+        {
             float baseOffsetX = _playerController.IsFacingRight ? offsetRight : offsetLeft;
 
             if (Mathf.Abs(_playerRigidbody.velocity.x) > 0.1f)
             {
-                // Permitir desplazamiento extra mientras camina
-                targetOffsetX = baseOffsetX + (_playerController.IsFacingRight ? maxHorizontalDisplacement : -maxHorizontalDisplacement);
+                float displacementFactor = Mathf.Clamp(
+                    _playerRigidbody.velocity.x / 15f, // Reducida influencia de la velocidad para suavidad
+                    -maxHorizontalDisplacement,
+                    maxHorizontalDisplacement
+                );
+
+                targetOffsetX = baseOffsetX + (_playerController.IsFacingRight ? displacementFactor : -displacementFactor);
             }
             else
             {
-                // Suavemente regresar al offset base cuando se detiene
                 targetOffsetX = baseOffsetX;
             }
+        }
 
-            // Aplicar suavemente el offset horizontal
-            _framingTransposer.m_TrackedObjectOffset.x = Mathf.Lerp(
-                _framingTransposer.m_TrackedObjectOffset.x,
-                targetOffsetX,
+        private void UpdateVerticalOffset()
+        {
+            float playerVelocityY = _playerRigidbody.velocity.y;
+
+            float verticalAdjustment = Mathf.Lerp(
+                _framingTransposer.m_TrackedObjectOffset.y,
+                GetPlayerVerticalCenter() + verticalOffsetAdjustment + (playerVelocityY * 0.05f), // Menor impacto de la velocidad
                 Time.deltaTime * smoothReturnSpeed
             );
 
-            // Ajuste vertical dinámico
-            _framingTransposer.m_TrackedObjectOffset.y = GetPlayerVerticalCenter() + verticalOffsetAdjustment;
+            targetOffsetY = Mathf.Clamp(verticalAdjustment, -maxVerticalOffset, maxVerticalOffset);
+        }
+
+        private void ApplyWeightedOffsets()
+        {
+            float horizontalWeight = Mathf.Clamp01(1 - Mathf.Abs(_playerRigidbody.velocity.y) / maxVerticalSpeed);
+            float verticalWeight = 1f - horizontalWeight;
+
+            _framingTransposer.m_TrackedObjectOffset.x = Mathf.Lerp(
+                _framingTransposer.m_TrackedObjectOffset.x,
+                targetOffsetX,
+                Time.deltaTime * smoothReturnSpeed * horizontalWeight
+            );
+
+            _framingTransposer.m_TrackedObjectOffset.y = Mathf.Lerp(
+                _framingTransposer.m_TrackedObjectOffset.y,
+                targetOffsetY,
+                Time.deltaTime * smoothReturnSpeed * verticalWeight
+            );
         }
 
         private float GetPlayerVerticalCenter()
         {
-            // Calcula el centro vertical del jugador (basado en su Collider2D o su Transform)
             Collider2D playerCollider = _playerController.GetComponent<Collider2D>();
             if (playerCollider != null)
             {
                 return playerCollider.bounds.center.y - _playerController.transform.position.y;
             }
-
-            // Si no hay Collider2D, asumimos el centro del Transform
             return 0f;
         }
     }
