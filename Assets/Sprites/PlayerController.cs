@@ -14,11 +14,11 @@ public class PlayerController : MonoBehaviour
     public float fuerzaSaltoReducida1 = 12f; // Mayor salto tras el primer encogimiento
     public float fuerzaSaltoReducida2 = 14f; // Mayor salto tras el segundo encogimiento
 
-    [Header("TamaÒo del Personaje")]
-    public Vector3 tamaÒoNormal = Vector3.one;
-    public Vector3 tamaÒoAumentado = new Vector3(2f, 2f, 1f); // Crecido
-    public Vector3 tamaÒoReducido1 = new Vector3(0.75f, 0.75f, 1f); // Primer encogimiento
-    public Vector3 tamaÒoReducido2 = new Vector3(0.5f, 0.5f, 1f); // Segundo encogimiento
+    [Header("Tama√±o del Personaje")]
+    public Vector3 tama√±oNormal = Vector3.one;
+    public Vector3 tama√±oAumentado = new Vector3(2f, 2f, 1f); // Crecido
+    public Vector3 tama√±oReducido1 = new Vector3(0.75f, 0.75f, 1f); // Primer encogimiento
+    public Vector3 tama√±oReducido2 = new Vector3(0.5f, 0.5f, 1f); // Segundo encogimiento
 
     [Header("Peso del Personaje")]
     public float masaNormal = 1f;
@@ -33,6 +33,9 @@ public class PlayerController : MonoBehaviour
 
     // Estado de encogimiento
     private int nivelEncogimiento = 0; // 0 = Normal, 1 = Reducido una vez, 2 = Reducido dos veces
+
+    // NUEVA propiedad para saber si el jugador est√° mirando a la derecha
+    public bool IsFacingRight { get; private set; } = true;
 
     private void Start()
     {
@@ -53,9 +56,10 @@ public class PlayerController : MonoBehaviour
             puedeSaltar = false;
         }
 
-        // Flip del personaje (gira seg˙n direcciÛn de movimiento)
+        // Flip del personaje (gira seg√∫n direcci√≥n de movimiento)
         if (movimiento != 0)
         {
+            IsFacingRight = movimiento > 0; // Actualizamos la direcci√≥n del jugador
             transform.localScale = new Vector3(Mathf.Sign(movimiento) * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         }
     }
@@ -68,22 +72,22 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Cambia al tamaÒo aumentado
+    // Cambia al tama√±o aumentado
     public void Crecer()
     {
-        transform.localScale = tamaÒoAumentado;
+        transform.localScale = tama√±oAumentado;
         velocidadActual = velocidadAumentada;
         fuerzaSaltoActual = fuerzaSaltoAumentada;
         rb.mass = masaAumentada; // Aumenta la masa del Rigidbody
         nivelEncogimiento = 0; // Reset del encogimiento al crecer
     }
 
-    // Reduce el tamaÒo al nivel 1
+    // Reduce el tama√±o al nivel 1
     public void ReducirANivel1()
     {
-        if (nivelEncogimiento == 0) // Solo si est· en estado normal
+        if (nivelEncogimiento == 0) // Solo si est√° en estado normal
         {
-            transform.localScale = tamaÒoReducido1;
+            transform.localScale = tama√±oReducido1;
             velocidadActual = velocidadReducida1;
             fuerzaSaltoActual = fuerzaSaltoReducida1;
             rb.mass = masaReducida1; // Reduce la masa del Rigidbody
@@ -91,15 +95,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Reduce el tamaÒo al nivel 2
+    // Reduce el tama√±o al nivel 2
     public void ReducirANivel2()
     {
-        if (nivelEncogimiento == 1) // Solo si ya est· en nivel 1
+        if (nivelEncogimiento == 1) // Solo si ya est√° en nivel 1
         {
-            transform.localScale = tamaÒoReducido2;
+            transform.localScale = tama√±oReducido2;
             velocidadActual = velocidadReducida2;
             fuerzaSaltoActual = fuerzaSaltoReducida2;
-            rb.mass = masaReducida2; // Reduce a˙n m·s la masa
+            rb.mass = masaReducida2; // Reduce a√∫n m√°s la masa
             nivelEncogimiento = 2;
         }
     }
@@ -107,8 +111,8 @@ public class PlayerController : MonoBehaviour
     // Restaura al estado normal
     public void RestablecerEstado()
     {
-        // Restablece el tamaÒo, velocidad, salto y masa
-        transform.localScale = tamaÒoNormal;
+        // Restablece el tama√±o, velocidad, salto y masa
+        transform.localScale = tama√±oNormal;
         velocidadActual = velocidadNormal;
         fuerzaSaltoActual = fuerzaSaltoNormal;
         rb.mass = masaNormal;
@@ -117,19 +121,19 @@ public class PlayerController : MonoBehaviour
         nivelEncogimiento = 0;
     }
 
-    // Verifica si el personaje est· en su tamaÒo original
+    // Verifica si el personaje est√° en su tama√±o original
     public bool EsNormal()
     {
-        return nivelEncogimiento == 0 && transform.localScale == tamaÒoNormal;
+        return nivelEncogimiento == 0 && transform.localScale == tama√±oNormal;
     }
 
-    // Verifica si el personaje est· en su tamaÒo grande
+    // Verifica si el personaje est√° en su tama√±o grande
     public bool EsGrande()
     {
-        return transform.localScale == tamaÒoAumentado;
+        return transform.localScale == tama√±oAumentado;
     }
 
-    // Verifica si est· en un nivel especÌfico de encogimiento
+    // Verifica si est√° en un nivel espec√≠fico de encogimiento
     public bool EstaEnNivelDeReduccion(int nivel)
     {
         return nivelEncogimiento == nivel;
