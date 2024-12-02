@@ -1,141 +1,202 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     [Header("Movimiento")]
-    public float velocidadNormal = 5f;
-    public float velocidadAumentada = 3f;  // Velocidad cuando el personaje crece
-    public float velocidadReducida1 = 7f; // Velocidad tras el primer encogimiento
-    public float velocidadReducida2 = 9f; // Velocidad tras el segundo encogimiento
-    public float fuerzaSaltoNormal = 10f;
-    public float fuerzaSaltoAumentada = 7f; // Menor salto cuando crece
-    public float fuerzaSaltoReducida1 = 12f; // Mayor salto tras el primer encogimiento
-    public float fuerzaSaltoReducida2 = 14f; // Mayor salto tras el segundo encogimiento
+    [SerializeField] private float velocidadNormal = 5f;
+
+    [Header("Salto")]
+    [SerializeField] private float fuerzaSaltoNormal = 10f;
+    [SerializeField] private float gravedadNormal = 2.5f;
+    [SerializeField] private float gravedadPlaneo = 0.8f; // Gravedad reducida para planear
+    [SerializeField] private float gravedadCrecido = 5f;  // Gravedad aumentada para modo Grow
 
     [Header("Tamaño del Personaje")]
-    public Vector3 tamañoNormal = Vector3.one;
-    public Vector3 tamañoAumentado = new Vector3(2f, 2f, 1f); // Crecido
-    public Vector3 tamañoReducido1 = new Vector3(0.75f, 0.75f, 1f); // Primer encogimiento
-    public Vector3 tamañoReducido2 = new Vector3(0.5f, 0.5f, 1f); // Segundo encogimiento
+    [SerializeField] private Vector3 escalaNormal = new Vector3(1, 1, 1);
+    [SerializeField] private Vector3 escalaReducido1 = new Vector3(0.75f, 0.75f, 1);
+    [SerializeField] private Vector3 escalaReducido2 = new Vector3(0.5f, 0.5f, 1);
+    [SerializeField] private Vector3 escalaCrecido = new Vector3(1.5f, 1.5f, 1);
 
-    [Header("Peso del Personaje")]
-    public float masaNormal = 1f;
-    public float masaAumentada = 3f;   // Peso al crecer
-    public float masaReducida1 = 0.7f; // Peso tras el primer encogimiento
-    public float masaReducida2 = 0.5f; // Peso tras el segundo encogimiento
+    [Header("Detección de Suelo")]
+    [SerializeField] private Transform puntoSuelo;
+    [SerializeField] private float radioDeteccion = 0.2f;
+    [SerializeField] private LayerMask capaSuelo;
+
+    [Header("Partículas")]
+    [SerializeField] private ParticleSystem particulasSalto;
+    [SerializeField] private ParticleSystem particulasAterrizaje;
 
     private Rigidbody2D rb;
-    private bool puedeSaltar = false;
-    private float velocidadActual;
-    private float fuerzaSaltoActual;
+    private SpriteRenderer spriteRenderer; // Para voltear el personaje
+    private bool puedeSaltar;
+    private bool estaEnSuelo;
+    private int nivelEncogimiento = 0; // 0: Normal, 1: Reducido1, 2: Reducido2, 3: Grow
 
-    // Estado de encogimiento
-    private int nivelEncogimiento = 0; // 0 = Normal, 1 = Reducido una vez, 2 = Reducido dos veces
-
-    // NUEVA propiedad para saber si el jugador está mirando a la derecha
-    public bool IsFacingRight { get; private set; } = true;
-
-    private void Start()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        RestablecerEstado(); // Asegura que el personaje comience en su estado normal
+        spriteRenderer = GetComponent<SpriteRenderer>(); // Obtener el SpriteRenderer
     }
 
     private void Update()
     {
-        // Movimiento lateral
-        float movimiento = Input.GetAxisRaw("Horizontal");
-        rb.velocity = new Vector2(movimiento * velocidadActual, rb.velocity.y);
+        // Movimiento horizontal
+        float inputHorizontal = Input.GetAxisRaw("Horizontal");
+        rb.velocity = new Vector2(inputHorizontal * velocidadNormal, rb.velocity.y);
 
-        // Verificar salto
+        // Voltear el sprite según la dirección del movimiento
+        if (inputHorizontal != 0)
+        {
+            spriteRenderer.flipX = inputHorizontal < 0;
+            ActualizarDireccionParticulas(); // Ajustar la dirección de las partículas
+        }
+
+        // Saltar
         if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space)) && puedeSaltar)
         {
-            rb.velocity = new Vector2(rb.velocity.x, fuerzaSaltoActual);
-            puedeSaltar = false;
+            Saltar();
         }
 
-        // Flip del personaje (gira según dirección de movimiento)
-        if (movimiento != 0)
+        // Ajustar gravedad según el estado
+        AjustarGravedad();
+
+        // Verificar si aterrizó
+        VerificarSuelo();
+
+        // Escalar partículas
+        EscalarParticulas();
+    }
+
+    private void VerificarSuelo()
+    {
+        bool estabaEnSuelo = estaEnSuelo;
+        estaEnSuelo = Physics2D.OverlapCircle(puntoSuelo.position, radioDeteccion, capaSuelo);
+
+        if (estaEnSuelo && !estabaEnSuelo)
         {
-            IsFacingRight = movimiento > 0; // Actualizamos la dirección del jugador
-            transform.localScale = new Vector3(Mathf.Sign(movimiento) * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            // Generar partículas al aterrizar
+            if (particulasAterrizaje != null)
+            {
+                particulasAterrizaje.Play();
+            }
         }
+
+        puedeSaltar = estaEnSuelo;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void Saltar()
     {
-        if (collision.contacts[0].normal.y > 0.5f)
+        if (particulasSalto != null)
         {
-            puedeSaltar = true;
+            particulasSalto.Play(); // Generar partículas al saltar
         }
+        rb.velocity = new Vector2(rb.velocity.x, fuerzaSaltoNormal);
     }
 
-    // Cambia al tamaño aumentado
-    public void Crecer()
+    private void AjustarGravedad()
     {
-        transform.localScale = tamañoAumentado;
-        velocidadActual = velocidadAumentada;
-        fuerzaSaltoActual = fuerzaSaltoAumentada;
-        rb.mass = masaAumentada; // Aumenta la masa del Rigidbody
-        nivelEncogimiento = 0; // Reset del encogimiento al crecer
-    }
-
-    // Reduce el tamaño al nivel 1
-    public void ReducirANivel1()
-    {
-        if (nivelEncogimiento == 0) // Solo si está en estado normal
+        if (nivelEncogimiento == 3) // Modo Grow: Caída rápida
         {
-            transform.localScale = tamañoReducido1;
-            velocidadActual = velocidadReducida1;
-            fuerzaSaltoActual = fuerzaSaltoReducida1;
-            rb.mass = masaReducida1; // Reduce la masa del Rigidbody
-            nivelEncogimiento = 1;
+            rb.gravityScale = gravedadCrecido;
         }
-    }
-
-    // Reduce el tamaño al nivel 2
-    public void ReducirANivel2()
-    {
-        if (nivelEncogimiento == 1) // Solo si ya está en nivel 1
+        else if (!estaEnSuelo && rb.velocity.y < 0) // Planeo en el aire
         {
-            transform.localScale = tamañoReducido2;
-            velocidadActual = velocidadReducida2;
-            fuerzaSaltoActual = fuerzaSaltoReducida2;
-            rb.mass = masaReducida2; // Reduce aún más la masa
-            nivelEncogimiento = 2;
+            rb.gravityScale = gravedadPlaneo;
+        }
+        else
+        {
+            rb.gravityScale = gravedadNormal; // Estado normal
         }
     }
 
-    // Restaura al estado normal
-    public void RestablecerEstado()
+    private void EscalarParticulas()
     {
-        // Restablece el tamaño, velocidad, salto y masa
-        transform.localScale = tamañoNormal;
-        velocidadActual = velocidadNormal;
-        fuerzaSaltoActual = fuerzaSaltoNormal;
-        rb.mass = masaNormal;
-
-        // Reinicia el estado de encogimiento
-        nivelEncogimiento = 0;
+        if (particulasSalto != null)
+        {
+            var main = particulasSalto.main;
+            main.startSizeMultiplier = transform.localScale.x; // Escala basada en el tamaño del personaje
+        }
+        if (particulasAterrizaje != null)
+        {
+            var main = particulasAterrizaje.main;
+            main.startSizeMultiplier = transform.localScale.x; // Escala basada en el tamaño del personaje
+        }
     }
 
-    // Verifica si el personaje está en su tamaño original
-    public bool EsNormal()
+    private void ActualizarDireccionParticulas()
     {
-        return nivelEncogimiento == 0 && transform.localScale == tamañoNormal;
+        float flipDirection = spriteRenderer.flipX ? -1 : 1;
+
+        if (particulasSalto != null)
+        {
+            Vector3 particleScale = particulasSalto.transform.localScale;
+            particulasSalto.transform.localScale = new Vector3(flipDirection * Mathf.Abs(particleScale.x), particleScale.y, particleScale.z);
+        }
+
+        if (particulasAterrizaje != null)
+        {
+            Vector3 particleScale = particulasAterrizaje.transform.localScale;
+            particulasAterrizaje.transform.localScale = new Vector3(flipDirection * Mathf.Abs(particleScale.x), particleScale.y, particleScale.z);
+        }
     }
 
-    // Verifica si el personaje está en su tamaño grande
+    // Métodos requeridos por el script Boton
     public bool EsGrande()
     {
-        return transform.localScale == tamañoAumentado;
+        return nivelEncogimiento == 3; // Nivel 3 es el modo Grow
     }
 
-    // Verifica si está en un nivel específico de encogimiento
+    public bool EsNormal()
+    {
+        return nivelEncogimiento == 0; // Nivel 0 es el estado Normal
+    }
+
     public bool EstaEnNivelDeReduccion(int nivel)
     {
-        return nivelEncogimiento == nivel;
+        return nivelEncogimiento == nivel; // Comparar con el nivel requerido
+    }
+
+    public void Crecer()
+    {
+        nivelEncogimiento = 3;
+        fuerzaSaltoNormal = 7f; // Cambiamos valores para el modo Grow
+        velocidadNormal = 4f;
+        CambiarEscala(escalaCrecido);
+    }
+
+    public void ReducirANivel1()
+    {
+        nivelEncogimiento = 1;
+        fuerzaSaltoNormal = 12f;
+        velocidadNormal = 6f;
+        CambiarEscala(escalaReducido1);
+    }
+
+    public void ReducirANivel2()
+    {
+        nivelEncogimiento = 2;
+        fuerzaSaltoNormal = 14f;
+        velocidadNormal = 8f;
+        CambiarEscala(escalaReducido2);
+    }
+
+    public void RestablecerEstado()
+    {
+        nivelEncogimiento = 0;
+        fuerzaSaltoNormal = 10f;
+        velocidadNormal = 5f;
+        CambiarEscala(escalaNormal);
+    }
+
+    private void CambiarEscala(Vector3 nuevaEscala)
+    {
+        transform.localScale = nuevaEscala; // Cambiar tamaño del personaje
+    }
+
+    private void OnDrawGizmos()
+    {
+        // Visualizar el área de detección de suelo en el editor
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(puntoSuelo.position, radioDeteccion);
     }
 }

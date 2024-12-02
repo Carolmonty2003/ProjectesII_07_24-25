@@ -1,15 +1,21 @@
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class Boton : MonoBehaviour
 {
     public enum TipoBoton { Crecer, Restablecer, Reducir1, Reducir2 }
-    public TipoBoton tipoBoton;
+    [SerializeField] private TipoBoton tipoBoton;
+
+    [Header("Colores")]
+    [SerializeField] private Color colorInactivo = Color.white;
+    [SerializeField] private Color colorActivo = Color.green;
+    [SerializeField] private float duracionTransicionColor = 0.2f;
+
     private SpriteRenderer spriteRenderer;
+    private Coroutine transicionCoroutine;
+    private bool botonActivado;
 
-    public Color colorInactivo = Color.white;
-    public Color colorActivo = Color.green;
-
-    private void Start()
+    private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         ResetColor();
@@ -17,76 +23,62 @@ public class Boton : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (!other.CompareTag("Player")) return;
+
+        PlayerController jugador = other.GetComponent<PlayerController>();
+        if (jugador == null) return;
+
+        // Ejecuta la acción dependiendo del tipo de botón
+        switch (tipoBoton)
         {
-            PlayerController jugador = other.GetComponent<PlayerController>();
-
-            if (jugador != null)
-            {
-                switch (tipoBoton)
-                {
-                    case TipoBoton.Crecer:
-                        if (!jugador.EsGrande()) // Solo crece si no es grande
-                        {
-                            jugador.Crecer();
-                            ActivarBoton();
-                        }
-                        break;
-
-                    case TipoBoton.Reducir1:
-                        if (!jugador.EstaEnNivelDeReduccion(1)) // Verifica si no está ya reducido a nivel 1
-                        {
-                            jugador.ReducirANivel1(); // Llama a ReducirANivel1()
-                            ActivarBoton();
-                        }
-                        break;
-
-                    case TipoBoton.Reducir2:
-                        if (!jugador.EstaEnNivelDeReduccion(2)) // Verifica si no está ya reducido a nivel 2
-                        {
-                            jugador.ReducirANivel2(); // Llama a ReducirANivel2()
-                            ActivarBoton();
-                        }
-                        break;
-
-                    case TipoBoton.Restablecer:
-                        if (!jugador.EsNormal()) // Solo restablece si no está en tamaño original
-                        {
-                            jugador.RestablecerEstado();
-                            ReactivarBotones();
-                            ActivarBoton();
-                        }
-                        break;
-                }
-            }
+            case TipoBoton.Crecer:
+                if (!jugador.EsGrande()) jugador.Crecer();
+                break;
+            case TipoBoton.Reducir1:
+                if (!jugador.EstaEnNivelDeReduccion(1)) jugador.ReducirANivel1();
+                break;
+            case TipoBoton.Reducir2:
+                if (!jugador.EstaEnNivelDeReduccion(2)) jugador.ReducirANivel2();
+                break;
+            case TipoBoton.Restablecer:
+                if (!jugador.EsNormal()) jugador.RestablecerEstado();
+                break;
         }
+
+        ActivarBoton();
     }
 
     private void ActivarBoton()
     {
-        // Cambia el color del botón para indicar que fue usado
-        spriteRenderer.color = colorActivo;
+        if (botonActivado) return; // Evita activar el botón varias veces seguidas
+
+        botonActivado = true;
+        if (transicionCoroutine != null) StopCoroutine(transicionCoroutine);
+        transicionCoroutine = StartCoroutine(TransicionColor(colorActivo));
+
+        // Reinicia el color después de un tiempo (por ejemplo, 2 segundos)
+        Invoke(nameof(ResetColor), 2f);
     }
 
     private void ResetColor()
     {
-        // Restablece el color del botón a su estado inactivo
-        spriteRenderer.color = colorInactivo;
+        botonActivado = false; // Permite reactivar el botón
+        if (transicionCoroutine != null) StopCoroutine(transicionCoroutine);
+        transicionCoroutine = StartCoroutine(TransicionColor(colorInactivo));
     }
 
-    // Función pública para reactivar este botón
-    public void Reactivar()
+    private System.Collections.IEnumerator TransicionColor(Color targetColor)
     {
-        ResetColor();
-    }
+        Color inicio = spriteRenderer.color;
+        float tiempo = 0f;
 
-    // Reactiva todos los botones en la escena
-    private void ReactivarBotones()
-    {
-        Boton[] botones = FindObjectsOfType<Boton>();
-        foreach (Boton boton in botones)
+        // Lerp para suavizar la transición de color
+        while (tiempo < duracionTransicionColor)
         {
-            boton.ResetColor();
+            spriteRenderer.color = Color.Lerp(inicio, targetColor, tiempo / duracionTransicionColor);
+            tiempo += Time.deltaTime;
+            yield return null;
         }
+        spriteRenderer.color = targetColor;
     }
 }
