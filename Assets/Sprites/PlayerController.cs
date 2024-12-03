@@ -4,12 +4,15 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movimiento")]
     [SerializeField] private float velocidadNormal = 5f;
+    [SerializeField] private float velocidadReducido1 = 6f;
+    [SerializeField] private float velocidadReducido2 = 8f;
+    [SerializeField] private float velocidadCrecido = 4f;
 
     [Header("Salto")]
-    [SerializeField] private float fuerzaSaltoNormal = 10f;
+    [SerializeField] private float alturaSaltoConstante = 3f; // Altura medida desde los pies
     [SerializeField] private float gravedadNormal = 2.5f;
-    [SerializeField] private float gravedadPlaneo = 0.8f; // Gravedad reducida para planear
-    [SerializeField] private float gravedadCrecido = 5f;  // Gravedad aumentada para modo Grow
+    [SerializeField] private float gravedadPlaneo = 0.8f;
+    [SerializeField] private float gravedadCrecido = 5f;
 
     [Header("Tamaño del Personaje")]
     [SerializeField] private Vector3 escalaNormal = new Vector3(1, 1, 1);
@@ -27,60 +30,39 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private ParticleSystem particulasAterrizaje;
 
     private Rigidbody2D rb;
-    private SpriteRenderer spriteRenderer; // Para voltear el personaje
+    private SpriteRenderer spriteRenderer;
     private bool puedeSaltar;
     private bool estaEnSuelo;
-    private int nivelEncogimiento = 0; // 0: Normal, 1: Reducido1, 2: Reducido2, 3: Grow
+    private int nivelEncogimiento = 0;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>(); // Obtener el SpriteRenderer
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Update()
     {
-        // Movimiento horizontal
         float inputHorizontal = Input.GetAxisRaw("Horizontal");
-        rb.velocity = new Vector2(inputHorizontal * velocidadNormal, rb.velocity.y);
+        rb.velocity = new Vector2(inputHorizontal * ObtenerVelocidad(), rb.velocity.y);
 
-        // Voltear el sprite según la dirección del movimiento
         if (inputHorizontal != 0)
         {
             spriteRenderer.flipX = inputHorizontal < 0;
-            ActualizarDireccionParticulas(); // Ajustar la dirección de las partículas
         }
 
-        // Saltar
         if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space)) && puedeSaltar)
         {
             Saltar();
         }
 
-        // Ajustar gravedad según el estado
         AjustarGravedad();
-
-        // Verificar si aterrizó
         VerificarSuelo();
-
-        // Escalar partículas
-        EscalarParticulas();
     }
 
     private void VerificarSuelo()
     {
-        bool estabaEnSuelo = estaEnSuelo;
         estaEnSuelo = Physics2D.OverlapCircle(puntoSuelo.position, radioDeteccion, capaSuelo);
-
-        if (estaEnSuelo && !estabaEnSuelo)
-        {
-            // Generar partículas al aterrizar
-            if (particulasAterrizaje != null)
-            {
-                particulasAterrizaje.Play();
-            }
-        }
-
         puedeSaltar = estaEnSuelo;
     }
 
@@ -88,114 +70,89 @@ public class PlayerController : MonoBehaviour
     {
         if (particulasSalto != null)
         {
-            particulasSalto.Play(); // Generar partículas al saltar
+            particulasSalto.Play();
         }
-        rb.velocity = new Vector2(rb.velocity.x, fuerzaSaltoNormal);
+
+        // Calcula la fuerza del salto basada en la escala vertical
+        float alturaDesdePies = alturaSaltoConstante + transform.localScale.y / 2; // Ajusta por la mitad de la altura del personaje
+        float fuerzaSalto = Mathf.Sqrt(2 * alturaDesdePies * gravedadNormal);
+
+        rb.velocity = new Vector2(rb.velocity.x, fuerzaSalto);
     }
 
     private void AjustarGravedad()
     {
-        if (nivelEncogimiento == 3) // Modo Grow: Caída rápida
+        if (nivelEncogimiento == 3)
         {
             rb.gravityScale = gravedadCrecido;
         }
-        else if (!estaEnSuelo && rb.velocity.y < 0) // Planeo en el aire
+        else if (!estaEnSuelo && rb.velocity.y < 0)
         {
             rb.gravityScale = gravedadPlaneo;
         }
         else
         {
-            rb.gravityScale = gravedadNormal; // Estado normal
+            rb.gravityScale = gravedadNormal;
         }
     }
 
-    private void EscalarParticulas()
+    private float ObtenerVelocidad()
     {
-        if (particulasSalto != null)
+        return nivelEncogimiento switch
         {
-            var main = particulasSalto.main;
-            main.startSizeMultiplier = transform.localScale.x; // Escala basada en el tamaño del personaje
-        }
-        if (particulasAterrizaje != null)
-        {
-            var main = particulasAterrizaje.main;
-            main.startSizeMultiplier = transform.localScale.x; // Escala basada en el tamaño del personaje
-        }
+            1 => velocidadReducido1,
+            2 => velocidadReducido2,
+            3 => velocidadCrecido,
+            _ => velocidadNormal,
+        };
     }
 
-    private void ActualizarDireccionParticulas()
-    {
-        float flipDirection = spriteRenderer.flipX ? -1 : 1;
-
-        if (particulasSalto != null)
-        {
-            Vector3 particleScale = particulasSalto.transform.localScale;
-            particulasSalto.transform.localScale = new Vector3(flipDirection * Mathf.Abs(particleScale.x), particleScale.y, particleScale.z);
-        }
-
-        if (particulasAterrizaje != null)
-        {
-            Vector3 particleScale = particulasAterrizaje.transform.localScale;
-            particulasAterrizaje.transform.localScale = new Vector3(flipDirection * Mathf.Abs(particleScale.x), particleScale.y, particleScale.z);
-        }
-    }
-
-    // Métodos requeridos por el script Boton
     public bool EsGrande()
     {
-        return nivelEncogimiento == 3; // Nivel 3 es el modo Grow
+        return nivelEncogimiento == 3;
     }
 
     public bool EsNormal()
     {
-        return nivelEncogimiento == 0; // Nivel 0 es el estado Normal
+        return nivelEncogimiento == 0;
     }
 
     public bool EstaEnNivelDeReduccion(int nivel)
     {
-        return nivelEncogimiento == nivel; // Comparar con el nivel requerido
+        return nivelEncogimiento == nivel;
     }
 
     public void Crecer()
     {
         nivelEncogimiento = 3;
-        fuerzaSaltoNormal = 7f; // Cambiamos valores para el modo Grow
-        velocidadNormal = 4f;
         CambiarEscala(escalaCrecido);
     }
 
     public void ReducirANivel1()
     {
         nivelEncogimiento = 1;
-        fuerzaSaltoNormal = 12f;
-        velocidadNormal = 6f;
         CambiarEscala(escalaReducido1);
     }
 
     public void ReducirANivel2()
     {
         nivelEncogimiento = 2;
-        fuerzaSaltoNormal = 14f;
-        velocidadNormal = 8f;
         CambiarEscala(escalaReducido2);
     }
 
     public void RestablecerEstado()
     {
         nivelEncogimiento = 0;
-        fuerzaSaltoNormal = 10f;
-        velocidadNormal = 5f;
         CambiarEscala(escalaNormal);
     }
 
     private void CambiarEscala(Vector3 nuevaEscala)
     {
-        transform.localScale = nuevaEscala; // Cambiar tamaño del personaje
+        transform.localScale = nuevaEscala;
     }
 
     private void OnDrawGizmos()
     {
-        // Visualizar el área de detección de suelo en el editor
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(puntoSuelo.position, radioDeteccion);
     }

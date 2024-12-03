@@ -2050,8 +2050,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dd812aaa25bb7442ad982d3f8191849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocidadNormal: 5
-  fuerzaSaltoNormal: 8
+  velocidadNormal: 7
+  velocidadReducido1: 8
+  velocidadReducido2: 9
+  velocidadCrecido: 6
+  alturaSaltoConstante: 10
   gravedadNormal: 2.5
   gravedadPlaneo: 0.8
   gravedadCrecido: 4
