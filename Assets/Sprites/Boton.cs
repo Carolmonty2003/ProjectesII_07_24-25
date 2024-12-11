@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class Boton : MonoBehaviour
 {
-    public enum TipoBoton { Crecer, Restablecer, Reducir1, Reducir2 }
+    public enum TipoBoton { Crecer, Restablecer, Reducir1, Reducir2, Reducir3 }
     [SerializeField] private TipoBoton tipoBoton;
 
     [Header("Colores")]
@@ -28,7 +28,7 @@ public class Boton : MonoBehaviour
         PlayerController jugador = other.GetComponent<PlayerController>();
         if (jugador == null) return;
 
-        // Ejecuta la acción dependiendo del tipo de botón
+        // Ejecuta la acciï¿½n dependiendo del tipo de botï¿½n
         switch (tipoBoton)
         {
             case TipoBoton.Crecer:
@@ -40,6 +40,9 @@ public class Boton : MonoBehaviour
             case TipoBoton.Reducir2:
                 if (!jugador.EstaEnNivelDeReduccion(2)) jugador.ReducirANivel2();
                 break;
+            case TipoBoton.Reducir3:
+                if (!jugador.EstaEnNivelDeReduccion(3)) jugador.ReducirANivel3();
+                break;
             case TipoBoton.Restablecer:
                 if (!jugador.EsNormal()) jugador.RestablecerEstado();
                 break;
@@ -50,19 +53,19 @@ public class Boton : MonoBehaviour
 
     private void ActivarBoton()
     {
-        if (botonActivado) return; // Evita activar el botón varias veces seguidas
+        if (botonActivado) return; // Evita activar el botï¿½n varias veces seguidas
 
         botonActivado = true;
         if (transicionCoroutine != null) StopCoroutine(transicionCoroutine);
         transicionCoroutine = StartCoroutine(TransicionColor(colorActivo));
 
-        // Reinicia el color después de un tiempo (por ejemplo, 2 segundos)
+        // Reinicia el color despuï¿½s de un tiempo (por ejemplo, 2 segundos)
         Invoke(nameof(ResetColor), 2f);
     }
 
     private void ResetColor()
     {
-        botonActivado = false; // Permite reactivar el botón
+        botonActivado = false; // Permite reactivar el botï¿½n
         if (transicionCoroutine != null) StopCoroutine(transicionCoroutine);
         transicionCoroutine = StartCoroutine(TransicionColor(colorInactivo));
     }
@@ -72,7 +75,7 @@ public class Boton : MonoBehaviour
         Color inicio = spriteRenderer.color;
         float tiempo = 0f;
 
-        // Lerp para suavizar la transición de color
+        // Lerp para suavizar la transiciï¿½n de color
         while (tiempo < duracionTransicionColor)
         {
             spriteRenderer.color = Color.Lerp(inicio, targetColor, tiempo / duracionTransicionColor);

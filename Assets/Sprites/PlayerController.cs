@@ -5,7 +5,8 @@ public class PlayerController : MonoBehaviour
     [Header("Movimiento")]
     [SerializeField] private float velocidadNormal = 5f;
     [SerializeField] private float velocidadReducido1 = 6f;
-    [SerializeField] private float velocidadReducido2 = 8f;
+    [SerializeField] private float velocidadReducido2 = 7f;
+    [SerializeField] private float velocidadReducido3 = 8f;
     [SerializeField] private float velocidadCrecido = 4f;
 
     [Header("Salto")]
@@ -18,6 +19,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Vector3 escalaNormal = new Vector3(1, 1, 1);
     [SerializeField] private Vector3 escalaReducido1 = new Vector3(0.75f, 0.75f, 1);
     [SerializeField] private Vector3 escalaReducido2 = new Vector3(0.5f, 0.5f, 1);
+    [SerializeField] private Vector3 escalaReducido3 = new Vector3(0.25f, 0.25f, 1);
     [SerializeField] private Vector3 escalaCrecido = new Vector3(1.5f, 1.5f, 1);
 
     [Header("Detección de Suelo")]
@@ -85,7 +87,7 @@ public class PlayerController : MonoBehaviour
 
     private void AjustarGravedad()
     {
-        if (nivelEncogimiento == 3)
+        if (nivelEncogimiento == 4)
         {
             rb.gravityScale = gravedadCrecido;
         }
@@ -105,14 +107,15 @@ public class PlayerController : MonoBehaviour
         {
             1 => velocidadReducido1,
             2 => velocidadReducido2,
-            3 => velocidadCrecido,
+            3 => velocidadReducido3,
+            4 => velocidadCrecido,
             _ => velocidadNormal,
         };
     }
 
     public bool EsGrande()
     {
-        return nivelEncogimiento == 3;
+        return nivelEncogimiento == 4;
     }
 
     public bool EsNormal()
@@ -127,7 +130,7 @@ public class PlayerController : MonoBehaviour
 
     public void Crecer()
     {
-        nivelEncogimiento = 3;
+        nivelEncogimiento = 4;
         CambiarEscala(escalaCrecido);
     }
 
@@ -141,6 +144,12 @@ public class PlayerController : MonoBehaviour
     {
         nivelEncogimiento = 2;
         CambiarEscala(escalaReducido2);
+    }
+
+    public void ReducirANivel3()
+    {
+            nivelEncogimiento = 3;
+            CambiarEscala(escalaReducido3);
     }
 
     public void RestablecerEstado()
