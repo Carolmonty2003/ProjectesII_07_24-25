@@ -78,6 +78,9 @@ public class PlayerController : MonoBehaviour
         float fuerzaSalto = Mathf.Sqrt(2 * alturaDesdePies * gravedadNormal);
 
         rb.velocity = new Vector2(rb.velocity.x, fuerzaSalto);
+
+        // Alternar y notificar los grupos de plataformas
+        PlataformaToggle.AlternarGrupos();
     }
 
     private void AjustarGravedad()
