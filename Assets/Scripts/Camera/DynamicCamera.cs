@@ -89,7 +89,7 @@ namespace GoodbyeBuddy
             // Determina el zoom basado en el tamaño actual del personaje
             float newZoomTarget = zoomNormal;
 
-            if (_playerController.EstaEnNivelDeReduccion(4))
+            if (_playerController.EstaEnNivelDeReduccion(3))
             {
                 newZoomTarget = zoomReducido3;
             }
