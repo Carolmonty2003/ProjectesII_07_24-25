@@ -5558,7 +5558,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1028786392}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 70.97, y: -8.999996, z: 0.1}
+  m_LocalPosition: {x: 70.97, y: -9.002, z: 0.1}
   m_LocalScale: {x: 2.8070667, y: 0.8023601, z: 0.32550675}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6022,12 +6022,12 @@ MonoBehaviour:
   m_ScreenX: 0.5
   m_ScreenY: 0.55
   m_CameraDistance: 10
-  m_DeadZoneWidth: 0.2
-  m_DeadZoneHeight: 0.25
+  m_DeadZoneWidth: 0.077
+  m_DeadZoneHeight: 0.113
   m_DeadZoneDepth: 0
   m_UnlimitedSoftZone: 0
-  m_SoftZoneWidth: 0.5
-  m_SoftZoneHeight: 0.7
+  m_SoftZoneWidth: 0.29
+  m_SoftZoneHeight: 0.295
   m_BiasX: 0
   m_BiasY: 0
   m_CenterOnActivate: 1
@@ -7086,7 +7086,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -64.1327, y: 15.289336}
+  m_Offset: {x: -64.99327, y: 15.289336}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -7097,7 +7097,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 34.302982, y: 21.863626}
+  m_Size: {x: 32.581856, y: 21.863626}
   m_EdgeRadius: 0
 --- !u!114 &1234099509
 MonoBehaviour:
@@ -9567,7 +9567,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 1848869260}
   CameraEstatua: {fileID: 60193248}
-  virtualCamera: {fileID: 0}
+  offsetRight: 1
+  offsetLeft: -1
+  zoomNormal: 5
+  zoomReducido3: 2
+  zoomLerpSpeed: 5
+  zoomDelay: 2
 --- !u!61 &1645907384
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -9992,7 +9997,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1848869256}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.9, y: 0.6999999, z: -10}
+  m_LocalPosition: {x: 0.9, y: 0.60000956, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10017,7 +10022,7 @@ MonoBehaviour:
   zoomAumentado: 7
   zoomReducido1: 5
   zoomReducido2: 4
-  zoomReducido3: 3
+  zoomReducido3: 2
   zoomLerpSpeed: 2
   zoomDelay: 2
   offsetRight: 1
@@ -10040,13 +10045,13 @@ MonoBehaviour:
   - m_Script
   m_LockStageInInspector: 
   m_StreamingVersion: 20170927
-  m_Priority: 10
+  m_Priority: 0
   m_StandbyUpdate: 2
   m_LookAt: {fileID: 0}
   m_Follow: {fileID: 1968686969}
   m_Lens:
     FieldOfView: 34
-    OrthographicSize: 6
+    OrthographicSize: 5.0000916
     NearClipPlane: 0.3
     FarClipPlane: 1000
     Dutch: 0
@@ -10388,7 +10393,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -62.969673, y: 15.693314}
+  m_Offset: {x: -62.08378, y: 15.693314}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -10399,7 +10404,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 22.827118, y: 13.915581}
+  m_Size: {x: 21.055328, y: 13.915581}
   m_EdgeRadius: 0
 --- !u!114 &1906625054
 MonoBehaviour:
