@@ -31,6 +31,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private ParticleSystem particulasSalto;
     [SerializeField] private ParticleSystem particulasAterrizaje;
 
+    [Header("Animator")]
+    [SerializeField] private Animator animator; // Referencia al Animator
+
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
     private bool puedeSaltar;
@@ -60,6 +63,9 @@ public class PlayerController : MonoBehaviour
 
         AjustarGravedad();
         VerificarSuelo();
+
+        // Actualizar animación
+        ActualizarAnimaciones(inputHorizontal);
     }
 
     private void VerificarSuelo()
@@ -75,14 +81,12 @@ public class PlayerController : MonoBehaviour
             particulasSalto.Play();
         }
 
-        // Calcula la fuerza del salto basada en la escala vertical
         float alturaDesdePies = alturaSaltoConstante + transform.localScale.y / 2; // Ajusta por la mitad de la altura del personaje
         float fuerzaSalto = Mathf.Sqrt(2 * alturaDesdePies * gravedadNormal);
 
         rb.velocity = new Vector2(rb.velocity.x, fuerzaSalto);
 
-        // Alternar y notificar los grupos de plataformas
-        PlataformaToggle.AlternarGrupos();
+        PlataformaToggle.AlternarGrupos(); // Asegúrate de que este método exista y sea relevante.
     }
 
     private void AjustarGravedad()
@@ -111,6 +115,52 @@ public class PlayerController : MonoBehaviour
             4 => velocidadCrecido,
             _ => velocidadNormal,
         };
+    }
+
+    private void ActualizarAnimaciones(float inputHorizontal)
+    {
+        // WALK/IDLE
+        if (estaEnSuelo)
+        {
+            animator.SetBool("IsFalling", false);
+            animator.SetBool("IsGliding", false);
+            animator.SetBool("IsJumping", false);
+            animator.SetBool("IsWalking", inputHorizontal != 0);
+        }
+        else
+        {
+            animator.SetBool("IsWalking", false);
+
+            if (rb.velocity.y > 0)
+            {
+                // JUMP
+                animator.SetBool("IsJumping", true);
+                animator.SetBool("IsFalling", false);
+                animator.SetBool("IsGliding", false);
+            }
+            else if (rb.velocity.y < 0)
+            {
+                animator.SetBool("IsJumping", false);
+
+                // FALL vs GLIDE
+                if (nivelEncogimiento == 4)
+                {
+                    animator.SetBool("IsFalling", true);
+                    animator.SetBool("IsGliding", false);
+                }
+                else
+                {
+                    animator.SetBool("IsFalling", false);
+                    animator.SetBool("IsGliding", true);
+                }
+            }
+        }
+
+        // IDLE
+        if (estaEnSuelo && inputHorizontal == 0)
+        {
+            animator.SetBool("IsWalking", false);
+        }
     }
 
     public bool EsGrande()
@@ -148,8 +198,8 @@ public class PlayerController : MonoBehaviour
 
     public void ReducirANivel3()
     {
-            nivelEncogimiento = 3;
-            CambiarEscala(escalaReducido3);
+        nivelEncogimiento = 3;
+        CambiarEscala(escalaReducido3);
     }
 
     public void RestablecerEstado()

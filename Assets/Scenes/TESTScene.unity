@@ -898,14 +898,13 @@ MonoBehaviour:
   zoomAumentado: 7
   zoomReducido1: 4
   zoomReducido2: 3
+  zoomReducido3: 2
   zoomLerpSpeed: 5
+  zoomDelay: 2
   offsetRight: 1
   offsetLeft: -1
   verticalOffsetAdjustment: 0.2
-  maxHorizontalDisplacement: 0.3
-  maxVerticalOffset: 0.15
   smoothReturnSpeed: 1.8
-  maxVerticalSpeed: 6
 --- !u!114 &796807483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -986,7 +985,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 974138148}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.136, y: -0.684, z: 0}
+  m_LocalPosition: {x: -0.004, y: -0.684, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1007,7 +1006,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3491080858453705400, guid: e5ec9242ffdf2184a8224fcfbd24446a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.132
+      value: -0.00799939
       objectReference: {fileID: 0}
     - target: {fileID: 3491080858453705400, guid: e5ec9242ffdf2184a8224fcfbd24446a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1064,6 +1063,10 @@ PrefabInstance:
     - target: {fileID: 8966734778122369184, guid: e5ec9242ffdf2184a8224fcfbd24446a, type: 3}
       propertyPath: m_Name
       value: Jump Particles
+      objectReference: {fileID: 0}
+    - target: {fileID: 8966734778122369184, guid: e5ec9242ffdf2184a8224fcfbd24446a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1807,7 +1810,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 649652523771826854, guid: 7c80b5d6267c80f4b93bec0e577ef7cb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.135
+      value: -0.0049993843
       objectReference: {fileID: 0}
     - target: {fileID: 649652523771826854, guid: 7c80b5d6267c80f4b93bec0e577ef7cb, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1815,7 +1818,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 649652523771826854, guid: 7c80b5d6267c80f4b93bec0e577ef7cb, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 649652523771826854, guid: 7c80b5d6267c80f4b93bec0e577ef7cb, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1856,6 +1859,10 @@ PrefabInstance:
     - target: {fileID: 6400305913253353167, guid: 7c80b5d6267c80f4b93bec0e577ef7cb, type: 3}
       propertyPath: m_Name
       value: Land Particles
+      objectReference: {fileID: 0}
+    - target: {fileID: 6400305913253353167, guid: 7c80b5d6267c80f4b93bec0e577ef7cb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1934,6 +1941,8 @@ GameObject:
   - component: {fileID: 5646095977092065876}
   - component: {fileID: 1743648319409955383}
   - component: {fileID: 6262649434458142422}
+  - component: {fileID: 7407248534774093489}
+  - component: {fileID: 7407248534774093490}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1973,18 +1982,18 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.011761665}
+  m_Offset: {x: 0.02487421, y: 0.011761665}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.9, y: 1.5}
+    oldSize: {x: 0.48, y: 1.42}
     newSize: {x: 0.9, y: 1.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.9, y: 1.4764767}
+  m_Size: {x: 0.36565685, y: 1.4764767}
   m_EdgeRadius: 0
 --- !u!212 &6099112670573550126
 SpriteRenderer:
@@ -2027,7 +2036,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 4df9c4fb2b5d5fe48a1ae29a4c3140af, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 613dd207ec2cba04a9e639aacf4d03a4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2053,6 +2062,7 @@ MonoBehaviour:
   velocidadNormal: 7
   velocidadReducido1: 8
   velocidadReducido2: 9
+  velocidadReducido3: 8
   velocidadCrecido: 6
   alturaSaltoConstante: 10
   gravedadNormal: 2.5
@@ -2061,6 +2071,7 @@ MonoBehaviour:
   escalaNormal: {x: 1, y: 1, z: 1}
   escalaReducido1: {x: 0.75, y: 0.75, z: 1}
   escalaReducido2: {x: 0.5, y: 0.5, z: 1}
+  escalaReducido3: {x: 0.25, y: 0.25, z: 1}
   escalaCrecido: {x: 2, y: 2, z: 1}
   puntoSuelo: {fileID: 974138149}
   radioDeteccion: 0.2
@@ -2069,6 +2080,7 @@ MonoBehaviour:
     m_Bits: 64
   particulasSalto: {fileID: 1757307255}
   particulasAterrizaje: {fileID: 1801878829}
+  animator: {fileID: 7407248534774093489}
 --- !u!4 &7407248534774093488
 Transform:
   m_ObjectHideFlags: 0
@@ -2088,3 +2100,59 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &7407248534774093489
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4876042365100457819}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 01e803d704d124b468a4b39221482e2d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!70 &7407248534774093490
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4876042365100457819}
+  m_Enabled: 0
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.010020733, y: 0.0075159073}
+  m_Size: {x: 0.39983273, y: 1.4250102}
+  m_Direction: 0
