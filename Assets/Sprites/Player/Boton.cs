@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class Boton : MonoBehaviour
 {
-    public enum TipoBoton { Crecer, Restablecer, Reducir1, Reducir2, Reducir3 }
+    public enum TipoBoton { Crecer, Crecer2, Restablecer, RestablecerDesdeCrecido2, Reducir1, Reducir2, Reducir3 }
     [SerializeField] private TipoBoton tipoBoton;
 
     [Header("Colores")]
@@ -28,23 +28,31 @@ public class Boton : MonoBehaviour
         PlayerController jugador = other.GetComponent<PlayerController>();
         if (jugador == null) return;
 
-        // Ejecuta la acci�n dependiendo del tipo de bot�n
+        // Evitar interacción si el jugador está en Crecido2, excepto con RestablecerDesdeCrecido2
+        if (jugador.EstaEnNivelDeReduccion(5) && tipoBoton != TipoBoton.RestablecerDesdeCrecido2) return;
+
         switch (tipoBoton)
         {
             case TipoBoton.Crecer:
-                if (!jugador.EsGrande()) jugador.Crecer();
+                jugador.Crecer();
+                break;
+            case TipoBoton.Crecer2:
+                jugador.CrecerANivel2();
                 break;
             case TipoBoton.Reducir1:
-                if (!jugador.EstaEnNivelDeReduccion(1)) jugador.ReducirANivel1();
+                jugador.ReducirANivel1();
                 break;
             case TipoBoton.Reducir2:
-                if (!jugador.EstaEnNivelDeReduccion(2)) jugador.ReducirANivel2();
+                jugador.ReducirANivel2();
                 break;
             case TipoBoton.Reducir3:
-                if (!jugador.EstaEnNivelDeReduccion(3)) jugador.ReducirANivel3();
+                jugador.ReducirANivel3();
                 break;
             case TipoBoton.Restablecer:
-                if (!jugador.EsNormal()) jugador.RestablecerEstado();
+                jugador.RestablecerEstado();
+                break;
+            case TipoBoton.RestablecerDesdeCrecido2:
+                jugador.RestablecerDesdeCrecido2();
                 break;
         }
 
@@ -53,19 +61,18 @@ public class Boton : MonoBehaviour
 
     private void ActivarBoton()
     {
-        if (botonActivado) return; // Evita activar el bot�n varias veces seguidas
+        if (botonActivado) return;
 
         botonActivado = true;
         if (transicionCoroutine != null) StopCoroutine(transicionCoroutine);
         transicionCoroutine = StartCoroutine(TransicionColor(colorActivo));
 
-        // Reinicia el color despu�s de un tiempo (por ejemplo, 2 segundos)
         Invoke(nameof(ResetColor), 2f);
     }
 
     private void ResetColor()
     {
-        botonActivado = false; // Permite reactivar el bot�n
+        botonActivado = false;
         if (transicionCoroutine != null) StopCoroutine(transicionCoroutine);
         transicionCoroutine = StartCoroutine(TransicionColor(colorInactivo));
     }
@@ -75,7 +82,6 @@ public class Boton : MonoBehaviour
         Color inicio = spriteRenderer.color;
         float tiempo = 0f;
 
-        // Lerp para suavizar la transici�n de color
         while (tiempo < duracionTransicionColor)
         {
             spriteRenderer.color = Color.Lerp(inicio, targetColor, tiempo / duracionTransicionColor);

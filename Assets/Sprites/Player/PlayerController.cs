@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
@@ -8,12 +9,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float velocidadReducido2 = 7f;
     [SerializeField] private float velocidadReducido3 = 8f;
     [SerializeField] private float velocidadCrecido = 4f;
+    [SerializeField] private float velocidadCrecido2 = 3f;
 
     [Header("Salto")]
-    [SerializeField] private float alturaSaltoConstante = 3f; // Altura medida desde los pies
+    [SerializeField] private float alturaSaltoConstante = 3f;
     [SerializeField] private float gravedadNormal = 2.5f;
     [SerializeField] private float gravedadPlaneo = 0.8f;
     [SerializeField] private float gravedadCrecido = 5f;
+    [SerializeField] private float gravedadCrecido2 = 6f;
 
     [Header("Tamaño del Personaje")]
     [SerializeField] private Vector3 escalaNormal = new Vector3(1, 1, 1);
@@ -21,6 +24,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Vector3 escalaReducido2 = new Vector3(0.5f, 0.5f, 1);
     [SerializeField] private Vector3 escalaReducido3 = new Vector3(0.25f, 0.25f, 1);
     [SerializeField] private Vector3 escalaCrecido = new Vector3(1.5f, 1.5f, 1);
+    [SerializeField] private Vector3 escalaCrecido2 = new Vector3(2, 2, 1);
+    [SerializeField] private AnimationCurve curvaDeAnimacion;
 
     [Header("Detección de Suelo")]
     [SerializeField] private Transform puntoSuelo;
@@ -29,16 +34,16 @@ public class PlayerController : MonoBehaviour
 
     [Header("Partículas")]
     [SerializeField] private ParticleSystem particulasSalto;
-    [SerializeField] private ParticleSystem particulasAterrizaje;
 
     [Header("Animator")]
-    [SerializeField] private Animator animator; // Referencia al Animator
+    [SerializeField] private Animator animator;
 
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
     private bool puedeSaltar;
     private bool estaEnSuelo;
     private int nivelEncogimiento = 0;
+    private bool bloqueadoPorAnimacion = false;
 
     private void Awake()
     {
@@ -48,6 +53,12 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (bloqueadoPorAnimacion)
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y);
+            return;
+        }
+
         float inputHorizontal = Input.GetAxisRaw("Horizontal");
         rb.velocity = new Vector2(inputHorizontal * ObtenerVelocidad(), rb.velocity.y);
 
@@ -63,8 +74,6 @@ public class PlayerController : MonoBehaviour
 
         AjustarGravedad();
         VerificarSuelo();
-
-        // Actualizar animación
         ActualizarAnimaciones(inputHorizontal);
     }
 
@@ -81,17 +90,19 @@ public class PlayerController : MonoBehaviour
             particulasSalto.Play();
         }
 
-        float alturaDesdePies = alturaSaltoConstante + transform.localScale.y / 2; // Ajusta por la mitad de la altura del personaje
+        float alturaDesdePies = alturaSaltoConstante + transform.localScale.y / 2;
         float fuerzaSalto = Mathf.Sqrt(2 * alturaDesdePies * gravedadNormal);
 
         rb.velocity = new Vector2(rb.velocity.x, fuerzaSalto);
-
-        PlataformaToggle.AlternarGrupos(); // Asegúrate de que este método exista y sea relevante.
     }
 
     private void AjustarGravedad()
     {
-        if (nivelEncogimiento == 4)
+        if (nivelEncogimiento == 5)
+        {
+            rb.gravityScale = gravedadCrecido2;
+        }
+        else if (nivelEncogimiento == 4)
         {
             rb.gravityScale = gravedadCrecido;
         }
@@ -113,13 +124,13 @@ public class PlayerController : MonoBehaviour
             2 => velocidadReducido2,
             3 => velocidadReducido3,
             4 => velocidadCrecido,
+            5 => velocidadCrecido2,
             _ => velocidadNormal,
         };
     }
 
     private void ActualizarAnimaciones(float inputHorizontal)
     {
-        // WALK/IDLE
         if (estaEnSuelo)
         {
             animator.SetBool("IsFalling", false);
@@ -133,7 +144,6 @@ public class PlayerController : MonoBehaviour
 
             if (rb.velocity.y > 0)
             {
-                // JUMP
                 animator.SetBool("IsJumping", true);
                 animator.SetBool("IsFalling", false);
                 animator.SetBool("IsGliding", false);
@@ -142,8 +152,7 @@ public class PlayerController : MonoBehaviour
             {
                 animator.SetBool("IsJumping", false);
 
-                // FALL vs GLIDE
-                if (nivelEncogimiento == 4)
+                if (nivelEncogimiento == 4 || nivelEncogimiento == 5)
                 {
                     animator.SetBool("IsFalling", true);
                     animator.SetBool("IsGliding", false);
@@ -155,27 +164,43 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
-
-        // IDLE
-        if (estaEnSuelo && inputHorizontal == 0)
-        {
-            animator.SetBool("IsWalking", false);
-        }
     }
 
     public bool EsGrande()
     {
-        return nivelEncogimiento == 4;
-    }
-
-    public bool EsNormal()
-    {
-        return nivelEncogimiento == 0;
+        return nivelEncogimiento == 4 || nivelEncogimiento == 5;
     }
 
     public bool EstaEnNivelDeReduccion(int nivel)
     {
         return nivelEncogimiento == nivel;
+    }
+
+    public void ReducirANivel1()
+    {
+        if (nivelEncogimiento == 0 || nivelEncogimiento == 2)
+        {
+            nivelEncogimiento = 1;
+            CambiarEscala(escalaReducido1);
+        }
+    }
+
+    public void ReducirANivel2()
+    {
+        if (nivelEncogimiento == 1)
+        {
+            nivelEncogimiento = 2;
+            CambiarEscala(escalaReducido2);
+        }
+    }
+
+    public void ReducirANivel3()
+    {
+        if (nivelEncogimiento == 2)
+        {
+            nivelEncogimiento = 3;
+            CambiarEscala(escalaReducido3);
+        }
     }
 
     public void Crecer()
@@ -184,22 +209,10 @@ public class PlayerController : MonoBehaviour
         CambiarEscala(escalaCrecido);
     }
 
-    public void ReducirANivel1()
+    public void CrecerANivel2()
     {
-        nivelEncogimiento = 1;
-        CambiarEscala(escalaReducido1);
-    }
-
-    public void ReducirANivel2()
-    {
-        nivelEncogimiento = 2;
-        CambiarEscala(escalaReducido2);
-    }
-
-    public void ReducirANivel3()
-    {
-        nivelEncogimiento = 3;
-        CambiarEscala(escalaReducido3);
+        nivelEncogimiento = 5;
+        CambiarEscala(escalaCrecido2);
     }
 
     public void RestablecerEstado()
@@ -208,9 +221,43 @@ public class PlayerController : MonoBehaviour
         CambiarEscala(escalaNormal);
     }
 
+    public void RestablecerDesdeCrecido2()
+    {
+        if (nivelEncogimiento == 5)
+        {
+            nivelEncogimiento = 0;
+            CambiarEscala(escalaNormal);
+        }
+    }
+
     private void CambiarEscala(Vector3 nuevaEscala)
     {
-        transform.localScale = nuevaEscala;
+        float duracionAnimacion = 0.5f;
+        StartCoroutine(AnimarCambioDeTamaño(nuevaEscala, duracionAnimacion));
+    }
+
+    private IEnumerator AnimarCambioDeTamaño(Vector3 escalaObjetivo, float duracion)
+    {
+        bloqueadoPorAnimacion = true;
+
+        animator.SetBool("IsWalking", false);
+        animator.SetBool("IsJumping", false);
+        animator.SetBool("IsFalling", false);
+        animator.SetBool("IsGliding", false);
+
+        Vector3 escalaInicial = transform.localScale;
+        float tiempo = 0;
+
+        while (tiempo < duracion)
+        {
+            tiempo += Time.deltaTime;
+            float progreso = curvaDeAnimacion.Evaluate(tiempo / duracion);
+            transform.localScale = Vector3.Lerp(escalaInicial, escalaObjetivo, progreso);
+            yield return null;
+        }
+
+        transform.localScale = escalaObjetivo;
+        bloqueadoPorAnimacion = false;
     }
 
     private void OnDrawGizmos()
