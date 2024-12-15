@@ -11,6 +11,18 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
+    public void PlayIra()
+    {
+
+        SceneManager.LoadScene(2);
+    }
+
+    public void PlayTristeza()
+    {
+
+        SceneManager.LoadScene(3);
+    }
+
     public void QuitGame() 
     {
         Debug.Log("Quit!");
