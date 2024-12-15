@@ -2494,13 +2494,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dd812aaa25bb7442ad982d3f8191849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocidadNormal: 7
-  velocidadReducido1: 8
-  velocidadReducido2: 9
-  velocidadReducido3: 8
-  velocidadCrecido: 6
-  velocidadCrecido2: 5
-  alturaSaltoConstante: 10
+  velocidadNormal: 6
+  velocidadReducido1: 6.5
+  velocidadReducido2: 6.8
+  velocidadReducido3: 7.1
+  velocidadCrecido: 5
+  velocidadCrecido2: 3
+  alturaSaltoConstante: 20
   gravedadNormal: 2.5
   gravedadPlaneo: 0.8
   gravedadCrecido: 4

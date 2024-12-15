@@ -67,7 +67,9 @@ public class PlayerController : MonoBehaviour
             spriteRenderer.flipX = inputHorizontal < 0;
         }
 
-        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space)) && puedeSaltar)
+        // Salto con teclas W, Espacio, Flecha Arriba y botón X del mando
+        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.Space)
+            || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetButtonDown("Jump")) && puedeSaltar)
         {
             Saltar();
         }
@@ -94,6 +96,8 @@ public class PlayerController : MonoBehaviour
         float fuerzaSalto = Mathf.Sqrt(2 * alturaDesdePies * gravedadNormal);
 
         rb.velocity = new Vector2(rb.velocity.x, fuerzaSalto);
+
+        PlataformaToggle.AlternarGrupos();
     }
 
     private void AjustarGravedad()
