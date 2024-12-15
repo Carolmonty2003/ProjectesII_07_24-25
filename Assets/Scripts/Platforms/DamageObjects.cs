@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DamageObjects : MonoBehaviour
+public class DamageObjects : MonoBehaviour 
 {
     private void OnTriggerEnter2D(Collider2D  collision)
     {
