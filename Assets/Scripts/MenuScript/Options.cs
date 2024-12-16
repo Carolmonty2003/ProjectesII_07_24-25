@@ -9,6 +9,8 @@ public class OptionMenu : MonoBehaviour
     public Slider volumeSlider;
     public AudioMixer audioMixer;
     public AudioMixer audioMixer2;
+    public bool fullScreen;
+    public Image tick;
 
     // Start is called before the first frame update
     void Start()
@@ -22,13 +24,30 @@ public class OptionMenu : MonoBehaviour
         
     }
 
-    public void SetVolume(float value)
+    public void SetMusicAudio(float muiscValue)
     {
-        audioMixer.SetFloat("BGMVolume",value);
+        audioMixer.SetFloat("MusicVolumen", muiscValue);
     }
 
-    public void SetSound(float value)
+    public void SetFXAudio(float FXValue)
     {
-        audioMixer.SetFloat("Sound", value);
+        audioMixer.SetFloat("FXVolumen", FXValue);
+    }
+
+    public void SetFullScreen()
+    {
+
+        fullScreen = !fullScreen;
+
+        if(fullScreen)
+        {
+            Screen.fullScreen = true;
+            tick.enabled = true; 
+        }
+        else
+        {
+            Screen.fullScreen = false;
+            tick.enabled = false;
+        }
     }
 }
