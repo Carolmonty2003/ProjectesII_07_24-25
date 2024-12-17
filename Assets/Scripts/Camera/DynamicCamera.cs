@@ -25,9 +25,9 @@ namespace GoodbyeBuddy
         private bool isZoomCoroutineRunning = false;
 
         // Configuración de offsets
-        public float offsetRight = 1.0f;
-        public float offsetLeft = -1.0f;
-        public float verticalOffsetAdjustment = 0.2f;
+        public float offsetRight = 0.5f;
+        public float offsetLeft = -0.5f;
+        public float verticalOffsetAdjustment = -0.5f;
         public float smoothReturnSpeed = 1.8f;
 
         private SpriteRenderer _playerSpriteRenderer; // Para acceder al flipX del jugador
