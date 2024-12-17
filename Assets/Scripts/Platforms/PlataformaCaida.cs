@@ -26,14 +26,14 @@ public class PlataformaCaida : MonoBehaviour
                 rb.bodyType = RigidbodyType2D.Dynamic;
             }
         }
-        else
-        {
-            if (rb.bodyType != RigidbodyType2D.Static)
-            {
-                rb.velocity = Vector2.zero;
-                rb.bodyType = RigidbodyType2D.Static;
-            }
-        }
+        //else
+        //{
+        //    if (rb.bodyType != RigidbodyType2D.Static)
+        //    {
+        //        rb.velocity = Vector2.zero;
+        //        rb.bodyType = RigidbodyType2D.Static;
+        //    }
+        //}
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
