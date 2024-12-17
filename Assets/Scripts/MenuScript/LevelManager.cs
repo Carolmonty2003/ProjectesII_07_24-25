@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
+    public bool isEnter = false;
     public string nextSceneName;
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -15,13 +16,10 @@ public class LevelManager : MonoBehaviour
 
     public void LoadNextLevel()
     {
-        if (!string.IsNullOrEmpty(nextSceneName))
+        if (!string.IsNullOrEmpty(nextSceneName) && isEnter)
         {
             SceneManager.LoadScene(nextSceneName);
         }
-        else
-        {
-            Debug.LogError("El nombre de la siguiente escena no está configurado.");
-        }
+        
     }
 }

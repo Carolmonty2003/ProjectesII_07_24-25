@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-
+ 
 public class PlayerController : MonoBehaviour
 {
     [Header("Movimiento")]
@@ -268,5 +268,13 @@ public class PlayerController : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(puntoSuelo.position, radioDeteccion);
+    }
+
+    public bool EresMuyGrande()
+    {
+        if (nivelEncogimiento == 5)
+            return true;
+        else
+            return false;
     }
 }
