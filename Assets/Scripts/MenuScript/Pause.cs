@@ -1,57 +1,93 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Pause : MonoBehaviour
 {
-    public GameObject Pausemenu;
-    public bool isStop = true;
-    public AudioSource Music;//For Stop Music when use Pause Menu
-    // Start is called before the first frame update
-    void Start()
-    {
+    public enum stateGame { STOP = 0, CONTINUE = 1 };
+    public stateGame currentState = stateGame.CONTINUE;
 
+    public AudioSource music;//For Stop Music when use Pause Menu
+    
+    public Slider volumeMusicSlider;
+    public Slider volumeFXSlider;
+    public AudioMixer audioMixer;
+    public AudioMixer audioMixer2;
+
+    void Awake()
+    {
+        audioMixer.SetFloat("MusicVolumen", SaveSettings.Instance.musicVolum);
+        audioMixer2.SetFloat("FXVolumen", SaveSettings.Instance.fxVolum);
+
+        volumeMusicSlider.value = SaveSettings.Instance.musicVolum;
+        volumeFXSlider.value = SaveSettings.Instance.fxVolum;
     }
+
 
     // Update is called once per frame
     void Update()
     {
-        if (isStop)
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (currentState == stateGame.CONTINUE)
             {
-                Pausemenu.SetActive(true);
-                isStop = false;
-                Time.timeScale = (0);//Stop the Game
-                Music.Pause();//Stop the Music
+                PauseGame();
             }
-        } else if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Pausemenu.SetActive(false);
-            isStop = true;
-            Time.timeScale = (1);//Continue the Game
-            Music.Play();//Start the Music
+            else
+            {
+                ResumeGame();
+            }
         }
 
     }
-
-    public void Resume()
+    public void PauseGame()
     {
-        Pausemenu.SetActive(false);
-        isStop = true;
-        Time.timeScale = (1);//Continue the Game
-        Music.Play();//Start the Music
+        //pauseMenu.SetActive(true);
+        this.gameObject.transform.GetChild(0).gameObject.SetActive(true);
+        currentState = stateGame.STOP;
+        Time.timeScale = 0; // Stop the Game
+        if (music != null)
+        {
+            music.Pause(); // Stop the Music
+        }
+    }
+
+    public void ResumeGame()
+    {
+        this.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+
+        currentState = stateGame.CONTINUE;
+        Time.timeScale = 1; // Resume the Game
+        if (music != null)
+        {
+            music.Play(); // Start the Music
+        }
+    }
+
+    public void Home()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene("Inicial menu");
     }
 
     public void Restart()
     {
-        SceneManager.LoadScene(0);
-        Time.timeScale = (1);
+        Time.timeScale = 1; // Reset time scale before restarting
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    public void Quit()
+    public void SetMusicAudio(float musicValue)
     {
-        Application.Quit();
+        SaveSettings.Instance.musicVolum = musicValue;
+        audioMixer.SetFloat("MusicVolumen", musicValue);
+    }
+
+    public void SetFXAudio(float FXValue)
+    {
+        SaveSettings.Instance.fxVolum = FXValue;
+        audioMixer2.SetFloat("FXVolumen", FXValue);
     }
 }
