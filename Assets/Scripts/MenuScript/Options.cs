@@ -6,16 +6,21 @@ using UnityEngine.UI;
 
 public class OptionMenu : MonoBehaviour
 {
-    public Slider volumeSlider;
+    public Slider volumeMusicSlider;
+    public Slider volumeFXSlider;
     public AudioMixer audioMixer;
     public AudioMixer audioMixer2;
     public bool fullScreen;
     public Image tick;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        
+        audioMixer.SetFloat("MusicVolumen", SaveSettings.Instance.musicVolum);
+        audioMixer2.SetFloat("FXVolumen", SaveSettings.Instance.fxVolum);
+
+        volumeMusicSlider.value = SaveSettings.Instance.musicVolum;
+        volumeFXSlider.value = SaveSettings.Instance.fxVolum;
     }
 
     // Update is called once per frame
@@ -24,14 +29,16 @@ public class OptionMenu : MonoBehaviour
         
     }
 
-    public void SetMusicAudio(float muiscValue)
+    public void SetMusicAudio(float musicValue)
     {
-        audioMixer.SetFloat("MusicVolumen", muiscValue);
+        SaveSettings.Instance.musicVolum = musicValue;
+        audioMixer.SetFloat("MusicVolumen", musicValue);
     }
 
     public void SetFXAudio(float FXValue)
     {
-        audioMixer.SetFloat("FXVolumen", FXValue);
+        SaveSettings.Instance.fxVolum = FXValue;
+        audioMixer2.SetFloat("FXVolumen", FXValue);
     }
 
     public void SetFullScreen()
