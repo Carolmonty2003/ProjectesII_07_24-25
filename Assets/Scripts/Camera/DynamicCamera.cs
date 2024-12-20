@@ -12,7 +12,8 @@ namespace GoodbyeBuddy
         private PlayerController _playerController;
 
         // Configuración de Zoom
-        public float zoomNormal = 5f;  
+        public float zoomNormal = 5f;
+        public float zoomAumentado2 = 20f;
         public float zoomAumentado = 7f;
         public float zoomReducido1 = 4f;
         public float zoomReducido2 = 3f;
@@ -105,6 +106,10 @@ namespace GoodbyeBuddy
             else if (_playerController.EsGrande())
             {
                 newZoomTarget = zoomAumentado;
+            }
+            else if (_playerController.EresMuyGrande())
+            {
+                newZoomTarget = zoomAumentado2;
             }
 
             if (Mathf.Abs(_currentZoomTarget - newZoomTarget) > 0.01f && !isZoomCoroutineRunning)
