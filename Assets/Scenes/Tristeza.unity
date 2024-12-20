@@ -941,7 +941,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 569927495b86927459731e3a44f62db3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -1142,7 +1142,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 569927495b86927459731e3a44f62db3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -1250,12 +1250,13 @@ PolygonCollider2D:
       - {x: -1.681396, y: 0.10010204}
       - {x: -1.8605822, y: 0.10538957}
       - {x: -1.9291273, y: 0.16259274}
-      - {x: -2.049651, y: 0.10010666}
-      - {x: -2.3930237, y: 0.100315355}
+      - {x: -2.1025925, y: 0.026893802}
+      - {x: -2.3538942, y: -0.00066884607}
       - {x: -2.4322078, y: 0.1850232}
       - {x: -2.512443, y: 0.18253711}
       - {x: -2.5881145, y: 0.15342815}
-      - {x: -2.6273842, y: 0.10507423}
+      - {x: -2.6319869, y: 0.0646787}
+      - {x: -3.5068817, y: 0.04386566}
       - {x: -4.1491275, y: 0.08766697}
       - {x: -4.2131386, y: 0.11523652}
       - {x: -4.263137, y: 0.08917722}
@@ -1559,7 +1560,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 569927495b86927459731e3a44f62db3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -11048,7 +11049,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 18cac1f3790e2bf4898fa67d7b4d0432, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -11123,6 +11124,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   virtualCamera: {fileID: 1298325676}
   zoomNormal: 5
+  zoomAumentado2: 20
   zoomAumentado: 7
   zoomReducido1: 4
   zoomReducido2: 3.3
@@ -13295,7 +13297,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -59.971443, y: -56.318756}
+  m_Offset: {x: -59.69467, y: -56.318756}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -13306,7 +13308,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 45.459488, y: 30.264145}
+  m_Size: {x: 46.013035, y: 30.264145}
   m_EdgeRadius: 0
 --- !u!1 &1689310648
 GameObject:
